@@ -14,6 +14,8 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
+import metodos.MetodosGraficos;
+
 public class ListadoMedios extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -56,5 +58,12 @@ public class ListadoMedios extends JDialog {
 		tableMedios.setBorder(UIManager.getBorder("List.noFocusBorder"));
 		tableMedios.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		scrollPaneMedios.setViewportView(tableMedios);
+		
+		MetodosGraficos.rellenarTablaMedios(tableMedios);
 	}
+	
+	// Añadir getter para la tabla
+    public JTable getTableMedios() {
+        return tableMedios;
+    }
 }

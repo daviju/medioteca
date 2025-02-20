@@ -13,6 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import metodos.MetodosGraficos;
+
 public class ListadoPeliculas extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -56,6 +58,13 @@ public class ListadoPeliculas extends JDialog {
 				scrollPanePeliculas.setViewportView(tablePeliculas);
 			}
 		}
+		
+		MetodosGraficos.rellenarTablaPeliculas(tablePeliculas);
 	}
+	
+	// Añadir getter para la tabla
+    public JTable getTablePeliculas() {
+        return tablePeliculas;
+    }
 
 }

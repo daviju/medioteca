@@ -127,6 +127,80 @@ public class MetodosGraficos {
 
 	}
 	
+	// IMPRIMIR
+    public static void rellenarTablaMedios(JTable tabla) {
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        modelo.setRowCount(0);
+        
+        ArrayList<Medio> medios = RepoMedio.findAll();
+        
+        for (Medio medio : medios) {
+            Object[] fila = {
+                medio.getNumRegistro(),
+                medio.getFechaAdquisicion(),
+                medio.getPrecioCompra(),
+                medio.getNumEjemplares()
+            };
+            modelo.addRow(fila);
+        }
+    }
+    
+    // IMPRIMIR PELICULAS
+    public static void rellenarTablaPeliculas(JTable tabla) {
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        modelo.setRowCount(0); // Limpiar tabla
+        
+        ArrayList<Peliculas> peliculas = RepoPelicula.findAll();
+        
+        for (Peliculas pelicula : peliculas) {
+            // Obtener los nombres de los protagonistas de la lista que ya tiene la película
+            String nombresProtagonistas = pelicula.getProtagonistas().stream()
+                .map(Protagonista::getNombre)
+                .collect(Collectors.joining(", "));
+            
+            Object[] fila = {
+                pelicula.getISAN(),
+                pelicula.getTitulo(),
+                pelicula.getDirector(),
+                nombresProtagonistas,
+                pelicula.getEstilo(),
+                pelicula.getSoporte(),
+                pelicula.getDuracion(),
+                pelicula.getAnioPublicacion(),
+                pelicula.getNumRegistro()
+            };
+            modelo.addRow(fila);
+        }
+    }
+    
+    // IMPRIMIR DISCOS
+    public static void rellenarTablaDiscos(JTable tabla) {
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+        modelo.setRowCount(0);
+        
+        ArrayList<Discos> discos = RepoDiscos.findAll();
+        
+        for (Discos disco : discos) {
+            // Obtener las canciones y concatenar sus nombres
+            ArrayList<Cancion> canciones = RepoCancion.findByDiscoISMN(disco.getISMN());
+            String nombresCanciones = canciones.stream()
+                .map(Cancion::getNombre)
+                .collect(Collectors.joining(", "));
+            
+            Object[] fila = {
+                disco.getISMN(),
+                disco.getTitulo(),
+                disco.getInterprete(),
+                disco.getEstilo(),
+                disco.getSoporte(),
+                disco.getAnioPublicacion(),
+                nombresCanciones,
+                disco.getNumRegistro()
+            };
+            modelo.addRow(fila);
+        }
+    }
+	
 	
 	// Devuelve Medio en Principales
 	public static Medio devuelveMedio(JTable tabla) {

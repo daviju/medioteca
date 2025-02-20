@@ -204,14 +204,48 @@ public class mainMenu extends JFrame {
 		JMenu mnListados = new JMenu("Listados");
 		navBar.add(mnListados);
 		
+		
+		// LISTADO MEDIOS
 		JMenuItem mntmListadoGeneral = new JMenuItem("Listado de Medios");
+		mntmListadoGeneral.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        ListadoMedios dialog = new ListadoMedios();
+		        dialog.setModal(true);
+		        dialog.setLocationRelativeTo(null);
+		        dialog.setVisible(true);
+		    }
+		});
+		
 		mnListados.add(mntmListadoGeneral);
 		
+		
+		// LISTADO PELICULAS
 		JMenuItem mntmListadoPeliculas = new JMenuItem("Listado Peliculas");
+		mntmListadoPeliculas.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        ListadoPeliculas dialog = new ListadoPeliculas();
+		        dialog.setModal(true);
+		        dialog.setLocationRelativeTo(null);
+		        dialog.setVisible(true);
+		    }
+		});
+		
 		mnListados.add(mntmListadoPeliculas);
 		
+		
+		// LISTADO DISCOS
 		JMenuItem mntmListadoDiscos = new JMenuItem("Listado Discos");
+		mntmListadoDiscos.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        ListadoDiscos dialog = new ListadoDiscos();
+		        dialog.setModal(true);
+		        dialog.setLocationRelativeTo(null);
+		        dialog.setVisible(true);
+		    }
+		});
+		
 		mnListados.add(mntmListadoDiscos);
+		
 		
 		JMenuItem mntmListadoLibros = new JMenuItem("Listado Libros");
 		mnListados.add(mntmListadoLibros);

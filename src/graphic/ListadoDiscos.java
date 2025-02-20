@@ -11,6 +11,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Font;
 import javax.swing.table.DefaultTableModel;
+
+import metodos.MetodosGraficos;
+
 import java.awt.Toolkit;
 
 public class ListadoDiscos extends JDialog {
@@ -56,6 +59,12 @@ public class ListadoDiscos extends JDialog {
 				scrollPane.setViewportView(table);
 			}
 		}
+		MetodosGraficos.rellenarTablaDiscos(table);
 	}
+	
+	// Añadir getter para la tabla
+    public JTable getTable() {
+        return table;
+    }
 
 }
