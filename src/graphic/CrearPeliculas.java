@@ -357,23 +357,36 @@ public class CrearPeliculas extends JDialog {
     
     // Validador de los datos del formulario si se dejan vacíos
     private boolean validateForm() {
+        // Validar ISAN
         if (textFieldISAN.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El ISAN es obligatorio", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El campo ISAN no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            textFieldISAN.requestFocus();
             return false;
         }
+        
+        // Validar Título
         if (textFieldTitulo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El título es obligatorio", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El campo Título no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            textFieldTitulo.requestFocus();
             return false;
         }
+        
+        // Validar Director
         if (textFieldDirector.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El director es obligatorio", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El campo Director no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            textFieldDirector.requestFocus();
             return false;
         }
+        
+        // Validar que se haya seleccionado un Medio
+        if (textFieldMedio.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un medio", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // Si todas las validaciones pasan, retornar true
         return true;
     }
-    
-    
-    
     
     
     public void setMedioSeleccionado(Medio medio) {

@@ -182,7 +182,6 @@ public class MetodosGraficos {
 	
 	
 	// CREAR PROTAGONISTA
-
 	public static void guardarProtagonista(CrearProtagonista crearProtagonista) {
 	    String nombreProta = crearProtagonista.getNombreProtagonista();
 	    
@@ -213,85 +212,61 @@ public class MetodosGraficos {
 	    int anio = yearChooser.getYear();
 	    
 	    String IDMedio = textFieldMedio.getText();
-	    int idMedio = Integer.parseInt(IDMedio); // Lo covertimos a INT
-	    
+	    int idMedio = Integer.parseInt(IDMedio);
 	    
 	    // Obtener el soporte seleccionado (Físico o Digital)
-	    String soporte = ""; // Variable para almacenar el soporte seleccionado
-	    
-	    // Enumeration sirve para obtener los elementos de una colección
-	    // AbstractButton es una clase abstracta que sirve como base para los botones 
-	    for (Enumeration<AbstractButton> buttons = soporteGroup.getElements(); buttons.hasMoreElements();) { // Ciclo para recorrer los botones del grupo soporteGroup
-	        JRadioButton button = (JRadioButton) buttons.nextElement(); // Obtiene el siguiente botón del grupo
-	        
-	        if (button.isSelected()) { // Verifica si el botón está seleccionado
-	            soporte = button.getText(); // Almacena el texto del botón seleccionado en la variable soporte
-	            break; // Sale del ciclo
+	    String soporte = "";
+	    for (Enumeration<AbstractButton> buttons = soporteGroup.getElements(); buttons.hasMoreElements();) {
+	        JRadioButton button = (JRadioButton) buttons.nextElement();
+	        if (button.isSelected()) {
+	            soporte = button.getText();
+	            break;
 	        }
 	    }
 	    
-	    System.out.println(isan);
-	    System.out.println(titulo);
-	    System.out.println(director);
-	    System.out.println(estilo);
-	    
-	    System.out.println(duracion);
-	    System.out.flush();
-	    
-	    System.out.println(anio);
-	    System.out.flush();
-	    
-	    System.out.println(IDMedio);
-	    System.out.println(idMedio);
-	    System.out.flush();
-	    
-	    System.out.println(soporte);
-	    
-	    // Crear el objeto Pelicula
-	    
-	    //Primero conseguimos los datos del medio para insertarlos en el consturctor de Pelicula
+	    // Obtener datos del medio
 	    Medio m = RepoMedio.findById(idMedio);
 	    
-	    System.out.println(m);
+	    if (m == null) {
+	        JOptionPane.showMessageDialog(null, 
+	            "Error: No se encontró el medio con ID: " + idMedio, 
+	            "Error", 
+	            JOptionPane.ERROR_MESSAGE);
+	        return;
+	    }
 	    
-	    //numRegistro, fechaAdquisicion, precioCompra, numEjemplares
-	    int numRegistro = m.getNumRegistro();
-	    LocalDate fechaAdquisicion = m.getFechaAdquisicion();
-	    Double precioCompra = m.getPrecioCompra();
-	    int numEjemplares = m.getNumEjemplares();
+	    // Crear lista de protagonistas
+	    List<Protagonista> protagonistas = new ArrayList<>();
+	    for (int i = 0; i < tableAñadidos.getRowCount(); i++) {
+	        String idProta = tableAñadidos.getValueAt(i, 0).toString();
+	        // Asumiendo que tienes un método para buscar protagonistas por ID
+	        Protagonista protagonista = RepoProtagonista.findById(Integer.parseInt(idProta));
+	        if (protagonista != null) {
+	            protagonistas.add(protagonista);
+	            System.out.println(protagonista);
+	        }
+	    }
 	    
-        // Crear las relaciones con los protagonistas
-        for (int i = 0; i < tableAñadidos.getRowCount(); i++) {
-            String idProta = tableAñadidos.getValueAt(i, 0);
-            
-            System.out.println(idProta);
-        }
-	    
+	    // Crear el objeto Pelicula
 	    Peliculas pelicula = new Peliculas(
-	    								   numRegistro,
-	    								   fechaAdquisicion,
-	    								   precioCompra,
-	    								   numEjemplares,
-	    								   
-									       isan,
-									       titulo,
-									       director,
-									       null, // protagonistas (se añadirán después)
-									       estilo,
-									       soporte,
-									       duracion,
-									       LocalDate.of(anio, 1, 1)  // anioPublicacion
-									    );
+	                                   m.getNumRegistro(),
+	                                   m.getFechaAdquisicion(),
+	                                   m.getPrecioCompra(),
+	                                   m.getNumEjemplares(),
+	                                   isan,
+	                                   titulo,
+	                                   director,
+	                                   protagonistas, // Ahora pasamos la lista de protagonistas
+	                                   estilo,
+	                                   soporte,
+	                                   duracion,
+	                                   LocalDate.of(anio, 1, 1)
+	                                );
 	    
-	    System.out.println(pelicula);
-	    
-	    // Guardar la película en la base de datos y obtener su ID
+	    // Guardar la película en la base de datos
 	    int resultado = RepoPelicula.create(pelicula);
 	    
-	    System.out.println(resultado);
-	    
 	    if (resultado != 0) {
-	        
 	        // Limpiar el formulario
 	        textFieldISAN.setText("");
 	        textFieldTitulo.setText("");
