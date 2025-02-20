@@ -298,113 +298,121 @@ public class MetodosGraficos {
 	
 	
 	// GUARDAR REVISTA
-	public static void guardarRevista(JTextField textFieldISMN, JTextField textFieldTitulo, 
-        JLabel selectedItemLabel, JSpinner spinnerNumPaginas, JTextArea textAreaIndice, 
-        JYearChooser yearChooser, JTextField textFieldMedio) {
-    
-	    try {
-	        // Recogemos los datos
-	        String ismn = textFieldISMN.getText().trim();
-	        String titulo = textFieldTitulo.getText().trim();
-	        String tematica = selectedItemLabel.getText().replace("Temática seleccionada: ", "").trim();
-	        int numPaginas = (int) spinnerNumPaginas.getValue();
-	        int anio = yearChooser.getYear();
-	        
-	        String IDMedio = textFieldMedio.getText();
-	        int numRegistro = Integer.parseInt(IDMedio);
-	        
-	        // Debug - Imprimir valores
-	        System.out.println("ISMN: " + ismn);
-	        System.out.println("Título: " + titulo);
-	        System.out.println("Temática: " + tematica);
-	        System.out.println("Número de páginas: " + numPaginas);
-	        System.out.println("Año: " + anio);
-	        System.out.println("Num Registro Medio: " + numRegistro);
-	        
-	        // Obtener el medio base
-	        Medio medioBase = RepoMedio.findById(numRegistro);
-	        if (medioBase == null) {
-	            JOptionPane.showMessageDialog(null, 
-	                "No se encontró el medio base", 
-	                "Error", 
-	                JOptionPane.ERROR_MESSAGE);
-	            return;
-	        }
-	        
-	        // Crear la revista
-	        Revistas revista = new Revistas(
-	            medioBase.getNumRegistro(),
-	            medioBase.getFechaAdquisicion(),
-	            medioBase.getPrecioCompra(),
-	            medioBase.getNumEjemplares(),
-	            ismn,  // ISMN
-	            titulo,
-	            tematica,
-	            new ArrayList<>(), // Lista vacía inicial de artículos
-	            LocalDate.of(anio, 1, 1),
-	            numPaginas
-	        );
-	        
-	        // Guardar la revista primero
-	        int resultadoRevista = RepoRevistas.create(revista);
-	        
-	        if (resultadoRevista > 0) {
-	            boolean todosArticulosCreados = true;
-	            
-	            // Dividir el texto del área de índice en líneas
-	            String[] lineasArticulos = textAreaIndice.getText().split("\n");
-	            
-	            for (String nombreArticulo : lineasArticulos) {
-	            	
-	                if (!nombreArticulo.trim().isEmpty()) {
-	                    Articulo articulo = new Articulo(
-	                        nombreArticulo.trim(),
-	                        revista,
-	                        medioBase
-	                    );
-	                    
-	                    // Guardar el artículo
-	                    int resultadoArticulo = RepoArticulo.create(articulo);
-	                    if (resultadoArticulo <= 0) {
-	                        todosArticulosCreados = false;
-	                        System.out.println("Error al crear el artículo: " + nombreArticulo);
-	                    }
-	                }
-	            }
-	            
-	            if (todosArticulosCreados) {
-	                JOptionPane.showMessageDialog(null, 
-	                    "Revista y artículos creados exitosamente", 
-	                    "Éxito", 
-	                    JOptionPane.INFORMATION_MESSAGE);
-	            } else {
-	                JOptionPane.showMessageDialog(null, 
-	                    "La revista se creó pero hubo errores al crear algunos artículos", 
-	                    "Advertencia", 
-	                    JOptionPane.WARNING_MESSAGE);
-	            }
-	            
-	        } else {
-	            JOptionPane.showMessageDialog(null, 
-	                "Error al crear la revista", 
-	                "Error", 
-	                JOptionPane.ERROR_MESSAGE);
-	        }
-	        
-	    } catch (NumberFormatException e) {
-	        JOptionPane.showMessageDialog(null, 
-	            "Error en el formato de los números: " + e.getMessage(), 
-	            "Error", 
-	            JOptionPane.ERROR_MESSAGE);
-	        e.printStackTrace();
-	    } catch (Exception e) {
-	        JOptionPane.showMessageDialog(null, 
-	            "Error al guardar la revista: " + e.getMessage(), 
-	            "Error", 
-	            JOptionPane.ERROR_MESSAGE);
-	        e.printStackTrace();
-	    }
-	}
+		public static void guardarRevista(JTextField textFieldISMN, JTextField textFieldTitulo, 
+	        JLabel selectedItemLabel, JSpinner spinnerNumPaginas, JTextArea textAreaIndice, 
+	        JYearChooser yearChooser, JTextField textFieldMedio) {
+	    
+		    try {
+		        // Recogemos los datos
+		        String ismn = textFieldISMN.getText().trim();
+		        String titulo = textFieldTitulo.getText().trim();
+		        String tematica = selectedItemLabel.getText().replace("Temática seleccionada: ", "").trim();
+		        int numPaginas = (int) spinnerNumPaginas.getValue();
+		        int anio = yearChooser.getYear();
+		        
+		        String IDMedio = textFieldMedio.getText();
+		        int numRegistro = Integer.parseInt(IDMedio);
+		        
+		        // Obtener el medio base
+		        Medio medioBase = RepoMedio.findById(numRegistro);
+		        if (medioBase == null) {
+		            JOptionPane.showMessageDialog(null, 
+		                "No se encontró el medio base", 
+		                "Error", 
+		                JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		        
+		        // Crear la revista
+		        Revistas revista = new Revistas(
+		            medioBase.getNumRegistro(),
+		            medioBase.getFechaAdquisicion(),
+		            medioBase.getPrecioCompra(),
+		            medioBase.getNumEjemplares(),
+		            ismn,  // ISMN
+		            titulo,
+		            tematica,
+		            new ArrayList<>(), // Lista vacía inicial de artículos
+		            LocalDate.of(anio, 1, 1),
+		            numPaginas
+		        );
+		        
+		        // Guardar la revista primero
+		        int resultadoRevista = RepoRevistas.create(revista);
+		        
+		        if (resultadoRevista > 0) {
+		            boolean todosArticulosCreados = true; // Bandera para saber si se crearon todos los artículos
+
+		            // Dividir el texto del área de índice en líneas separadas por salto de línea 
+		            String[] lineasArticulos = textAreaIndice.getText().split("\n");
+
+		            for (String linea : lineasArticulos) { // Procesar cada línea
+		                
+		            	if (!linea.trim().isEmpty()) { // Si la línea no está vacía
+		                    // Dividir cada línea por comas
+		                    String[] articulosEnLinea = linea.split(",");
+		                    
+		                    // Procesar cada artículo separado por coma
+		                    for (String nombreArticulo : articulosEnLinea) { // Procesar cada artículo
+		                        if (!nombreArticulo.trim().isEmpty()) { // Si el artículo no está vacío
+		                            Articulo articulo = new Articulo( // Crear un artículo
+		                                nombreArticulo.trim(), 
+		                                revista,
+		                                medioBase
+		                            );
+		                            
+		                            // Guardar el artículo
+		                            int resultadoArticulo = RepoArticulo.create(articulo);
+		                            
+	                                if (resultadoArticulo <= 0) {
+		                                todosArticulosCreados = false; // Si no se creó el artículo, la bandera se vuelve false
+		                                System.out.println("Error al crear el artículo: " + nombreArticulo);
+		                            }
+		                        }
+		                    }
+		                }
+		            }
+		            
+		            if (todosArticulosCreados) {
+		            	// Limpiamos formulario
+		                textFieldISMN.setText("");
+		                textFieldTitulo.setText("");
+		                selectedItemLabel.setText("Temática seleccionada: ");
+		                spinnerNumPaginas.setValue(0);
+		                yearChooser.setYear(LocalDate.now().getYear());
+		                textFieldMedio.setText("");
+		                textAreaIndice.setText("");
+		                
+		                JOptionPane.showMessageDialog(null,"Revista y artículos creados exitosamente","Éxito", JOptionPane.INFORMATION_MESSAGE);
+		                
+		            } else {
+		                JOptionPane.showMessageDialog(null, 
+		                    "La revista se creó pero hubo errores al crear algunos artículos", 
+		                    "Advertencia", 
+		                    JOptionPane.WARNING_MESSAGE);
+		            }
+		            
+		        } else {
+		            JOptionPane.showMessageDialog(null, 
+		                "Error al crear la revista", 
+		                "Error", 
+		                JOptionPane.ERROR_MESSAGE);
+		        }
+		        
+		    } catch (NumberFormatException e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error en el formato de los números: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error al guardar la revista: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    }
+		}
 	
 	
 	

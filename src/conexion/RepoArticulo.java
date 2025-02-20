@@ -14,7 +14,7 @@ public class RepoArticulo {
 
         try {
             java.sql.Statement st = ConexionDB.con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM articulos WHERE idArticulo=" + idArticulo + ";");
+            ResultSet rs = st.executeQuery("SELECT * FROM articulo WHERE idArticulo=" + idArticulo + ";");
             
             if (rs.next()) {
                 int idArti = rs.getInt("idArticulo");
@@ -38,7 +38,7 @@ public class RepoArticulo {
     // CREATE
     public static int create(Articulo articulo) {
         int resultado = 0;
-        String sql = "INSERT INTO articulos (idArticulo, nombre, Revistas_ISBN, Revistas_Medio_num_registro) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO articulo (idArticulo, nombre, Revistas_ISBN, Revistas_Medio_num_registro) VALUES (?, ?, ?, ?);";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
@@ -58,7 +58,7 @@ public class RepoArticulo {
     // DELETE
     public static int delete(int idArticulo) {
         int resultado = 0;
-        String sql = "DELETE FROM articulos WHERE idArticulo=?;";
+        String sql = "DELETE FROM articulo WHERE idArticulo=?;";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
@@ -75,7 +75,7 @@ public class RepoArticulo {
     // FIND ALL
     public static ArrayList<Articulo> findAll() {
         ArrayList<Articulo> listaArticulos = new ArrayList<>();
-        String sql = "SELECT * FROM articulos;";
+        String sql = "SELECT * FROM articulo;";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
@@ -100,7 +100,7 @@ public class RepoArticulo {
     // MODIFY
     public static int modify(Articulo articulo) {
         int resultado = 0;
-        String sql = "UPDATE articulos SET nombre = ?, Revistas_ISBN = ?, Revistas_Medio_num_registro = ? WHERE idArticulo = ?;";
+        String sql = "UPDATE articulo SET nombre = ?, Revistas_ISBN = ?, Revistas_Medio_num_registro = ? WHERE idArticulo = ?;";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
