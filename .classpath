@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="C:/Users/Daviju/Desktop/2º DAW/Recuperaciones/Programación/Copia/medioteca/jcalendar/jgoodies-common-1.2.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Daviju/Desktop/2º DAW/Recuperaciones/Programación/Copia/medioteca/jcalendar/jgoodies-looks-2.4.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Daviju/Desktop/2º DAW/Recuperaciones/Programación/Copia/medioteca/jcalendar/junit-4.6.jar"/>
+	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
