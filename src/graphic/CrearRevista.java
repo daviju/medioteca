@@ -7,6 +7,7 @@ import java.awt.event.*;
 import com.toedter.calendar.JYearChooser;
 
 import entidades.Medio;
+import metodos.MetodosGraficos;
 
 public class CrearRevista extends JDialog {
     private static final long serialVersionUID = 1L;
@@ -217,19 +218,23 @@ public class CrearRevista extends JDialog {
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-        JButton okButton = new JButton("OK");
-        okButton.setForeground(Color.GREEN);
-        okButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        okButton.addActionListener(e -> {
-            if (validateFields()) {
-                // Aquí puedes agregar la lógica para guardar la revista
-                JOptionPane.showMessageDialog(this,
-                    "Revista creada correctamente",
-                    "Éxito",
-                    JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+        JButton okButton = new JButton("Guardar");
+        okButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (validateForm()) {
+                    MetodosGraficos.guardarRevista(
+                        textFieldISMN,
+                        textFieldTitulo,
+                        selectedItemLabel,
+                        spinnerNumPaginas,
+                        textAreaIndice,
+                        yearChooser,
+                        textFieldMedio
+                    );
+                }
             }
         });
+        
         buttonPane.add(okButton);
         getRootPane().setDefaultButton(okButton);
 
