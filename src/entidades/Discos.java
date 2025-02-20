@@ -31,6 +31,14 @@ public class Discos extends Medio {
         this.setSoporte(soporte);
         this.setAnioPublicacion(anioPublicacion);
     }
+    
+    // Constructor 
+    public Discos(int numRegistro, LocalDate fechaAdquisicion, double precioCompra, int numEjemplares,
+            String ISMN, String titulo) {
+        super(numRegistro, fechaAdquisicion, precioCompra, numEjemplares);
+        this.setISMN(ISMN);
+        this.setTitulo(titulo);
+    }
 
     // Constructor sin ISMN
     public Discos(int numRegistro, LocalDate fechaAdquisicion, double precioCompra, int numEjemplares,

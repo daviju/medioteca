@@ -9,34 +9,44 @@ import entidades.*;
 public class RepoCancion {
 
 // FIND BY Disco
-public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
-    ArrayList<Cancion> listaCanciones = new ArrayList<>();
-    String sql = "SELECT * FROM cancion WHERE Discos_ISMN = ?";
+	public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
+	    ArrayList<Cancion> listaCanciones = new ArrayList<>();
+	    String sql = "SELECT c.*, d.titulo as disco_titulo FROM cancion c " +
+	                "JOIN discos d ON d.ISMN = c.Disco_ISMN " +
+	                "WHERE c.Disco_ISMN = ?";
 
-    try {
-        PreparedStatement st = ConexionDB.con.prepareStatement(sql);
-        st.setString(1, ISMN);
-        ResultSet rs = st.executeQuery();
+	    try {
+	        PreparedStatement st = ConexionDB.con.prepareStatement(sql);
+	        st.setString(1, ISMN);
+	        ResultSet rs = st.executeQuery();
 
-        while (rs.next()) {
-            // Obtener el disco y el medio asociado
-            Discos disco = RepoDiscos.findByISMN(ISMN);
-            Medio medio = RepoMedio.findById(rs.getInt("Discos_Medio_num_registro"));
+	        while (rs.next()) {
+	            // Obtener el medio
+	            Medio medio = RepoMedio.findById(rs.getInt("Discos_Medio_num_registro"));
+	        	
+	            Discos disco = new Discos();
+	            medio.getNumRegistro();
+	            medio.getFechaAdquisicion();
+	            medio.getPrecioCompra();
+	            medio.getNumEjemplares();
+	            
+	            disco.setISMN(ISMN);
+	            disco.setTitulo(rs.getString("disco_titulo"));
 
-            Cancion cancion = new Cancion(
-                rs.getInt("idCancion"),
-                rs.getString("nombre"),
-                disco, // Aquí pasamos el objeto disco completo
-                rs.getInt("duracionMinutos"),
-                medio  // Aquí pasamos el objeto medio completo
-            );
-            listaCanciones.add(cancion);
-        }
-    } catch (SQLException e) {
-        System.err.println("Error en findByDiscoISMN: " + e.getMessage());
-    }
-    return listaCanciones;
-}
+	            Cancion cancion = new Cancion(
+	                rs.getInt("idCancion"),
+	                rs.getString("nombre"),
+	                disco,
+	                rs.getInt("duracionMinutos"),
+	                medio
+	            );
+	            listaCanciones.add(cancion);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error en findByDiscoISMN: " + e.getMessage());
+	    }
+	    return listaCanciones;
+	}
 
     // CREATE
     public static int create(Cancion cancion) {

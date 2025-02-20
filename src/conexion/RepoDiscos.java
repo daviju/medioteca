@@ -9,42 +9,41 @@ import entidades.*;
 
 public class RepoDiscos {
 
-    // FIND BY ISMN
-    public static Discos findByISMN(String ISMN) {
-        Discos disco = null;
-        String sql = "SELECT * FROM discos WHERE ISMN = ?";
+	// FIND BY ISMN
+	public static Discos findByISMN(String ISMN) {
+	    Discos disco = null;
+	    String sql = "SELECT * FROM discos WHERE ISMN = ?";
 
-        try {
-            PreparedStatement st = ConexionDB.con.prepareStatement(sql);
-            st.setString(1, ISMN);
-            ResultSet rs = st.executeQuery();
+	    try {
+	        PreparedStatement st = ConexionDB.con.prepareStatement(sql);
+	        st.setString(1, ISMN);
+	        ResultSet rs = st.executeQuery();
 
-            if (rs.next()) {
-                // Obtener el medio asociado
-                Medio medio = RepoMedio.findById(rs.getInt("Medio_num_registro"));
+	        if (rs.next()) {
+	            // Obtener el medio asociado
+	            Medio medio = RepoMedio.findById(rs.getInt("Medio_num_registro"));
 
-                // Primero creamos el disco sin canciones
-                disco = new Discos(
-                        medio.getNumRegistro(),
-                        medio.getFechaAdquisicion(),
-                        medio.getPrecioCompra(),
-                        medio.getNumEjemplares(),
-                        ISMN,
-                        rs.getString("titulo"),
-                        rs.getString("interprete"),
-                        rs.getString("estilo"),
-                        rs.getString("soporte"),
-                        rs.getDate("anio_publicacion") != null ? rs.getDate("anio_publicacion").toLocalDate() : null);
-
-                // Obtenemos las canciones asociadas usando el ISMN
-                ArrayList<Cancion> canciones = RepoCancion.findByDiscoISMN(ISMN);
-                disco.setCanciones(canciones);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error en findByISMN: " + e.getMessage());
-        }
-        return disco;
-    }
+	            // Crear el disco sin canciones
+	            disco = new Discos(
+	                    medio.getNumRegistro(),
+	                    medio.getFechaAdquisicion(),
+	                    medio.getPrecioCompra(),
+	                    medio.getNumEjemplares(),
+	                    ISMN,
+	                    rs.getString("titulo"),
+	                    rs.getString("interprete"),
+	                    rs.getString("estilo"),
+	                    rs.getString("soporte"),
+	                    rs.getDate("anio_publicacion") != null ? rs.getDate("anio_publicacion").toLocalDate() : null);
+	            
+	            // NO cargar las canciones aquí
+	            disco.setCanciones(new ArrayList<>()); // Inicializar lista vacía
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error en findByISMN: " + e.getMessage());
+	    }
+	    return disco;
+	}
 
     // CREATE
     public static int create(Discos disco) {
