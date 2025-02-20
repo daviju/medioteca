@@ -20,6 +20,7 @@ public class CrearRevista extends JDialog {
     public static JTextArea textAreaIndice;
     public static JYearChooser yearChooser;
     public static JTextField textFieldMedio;
+    private JTextField textFieldISMN;
 
     public static void main(String[] args) {
         try {
@@ -42,7 +43,7 @@ public class CrearRevista extends JDialog {
 
     private void setupMainFrame() {
         setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\Logo.png"));
-        setBounds(100, 100, 518, 605);
+        setBounds(100, 100, 518, 676);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -54,12 +55,12 @@ public class CrearRevista extends JDialog {
         JLabel lblTitulo = new JLabel("Título:");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblTitulo.setBounds(20, 94, 77, 20);
+        lblTitulo.setBounds(20, 184, 77, 20);
         contentPanel.add(lblTitulo);
 
         textFieldTitulo = new JTextField();
         textFieldTitulo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        textFieldTitulo.setBounds(107, 86, 312, 37);
+        textFieldTitulo.setBounds(107, 176, 312, 37);
         contentPanel.add(textFieldTitulo);
         textFieldTitulo.setColumns(10);
 
@@ -67,39 +68,39 @@ public class CrearRevista extends JDialog {
         JLabel lblCategories = new JLabel("Temática:");
         lblCategories.setForeground(Color.WHITE);
         lblCategories.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblCategories.setBounds(20, 187, 90, 37);
+        lblCategories.setBounds(20, 293, 90, 37);
         contentPanel.add(lblCategories);
 
         // Selected Category Label
         selectedItemLabel = new JLabel("Temática seleccionada: Ninguna");
         selectedItemLabel.setForeground(Color.WHITE);
         selectedItemLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        selectedItemLabel.setBounds(107, 133, 300, 25);
+        selectedItemLabel.setBounds(107, 224, 300, 25);
         contentPanel.add(selectedItemLabel);
 
         // Índice Label and TextArea
         JLabel lblIndice = new JLabel("Artículos:");
         lblIndice.setForeground(Color.WHITE);
         lblIndice.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblIndice.setBounds(20, 344, 90, 20);
+        lblIndice.setBounds(20, 426, 90, 20);
         contentPanel.add(lblIndice);
 
         textAreaIndice = new JTextArea();
         textAreaIndice.setFont(new Font("Tahoma", Font.PLAIN, 16));
         JScrollPane scrollPaneIndice = new JScrollPane(textAreaIndice);
-        scrollPaneIndice.setBounds(107, 303, 375, 100);
+        scrollPaneIndice.setBounds(106, 382, 375, 100);
         contentPanel.add(scrollPaneIndice);
 
         JLabel lblAdvertencia = new JLabel("Separa los artículos por comas");
         lblAdvertencia.setForeground(Color.RED);
-        lblAdvertencia.setBounds(107, 278, 189, 14);
+        lblAdvertencia.setBounds(107, 367, 189, 14);
         contentPanel.add(lblAdvertencia);
 
         // Año de publicación
         JLabel lblAnio = new JLabel("Año:");
         lblAnio.setForeground(Color.WHITE);
         lblAnio.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblAnio.setBounds(20, 435, 47, 20);
+        lblAnio.setBounds(20, 503, 47, 20);
         contentPanel.add(lblAnio);
 
 
@@ -107,13 +108,13 @@ public class CrearRevista extends JDialog {
         JLabel lblNumPaginas = new JLabel("Páginas:");
         lblNumPaginas.setForeground(Color.WHITE);
         lblNumPaginas.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblNumPaginas.setBounds(20, 483, 90, 20);
+        lblNumPaginas.setBounds(20, 552, 90, 20);
         contentPanel.add(lblNumPaginas);
 
         SpinnerModel pagesModel = new SpinnerNumberModel(1, 1, 1000, 1);
         spinnerNumPaginas = new JSpinner(pagesModel);
         spinnerNumPaginas.setFont(new Font("Tahoma", Font.PLAIN, 16));
-        spinnerNumPaginas.setBounds(107, 479, 100, 30);
+        spinnerNumPaginas.setBounds(107, 548, 100, 30);
         contentPanel.add(spinnerNumPaginas);
 
 
@@ -154,7 +155,7 @@ public class CrearRevista extends JDialog {
 
         // Create and configure the scroll pane
         scrollPaneTematicas = new JScrollPane(listTematicas);
-        scrollPaneTematicas.setBounds(107, 155, 312, 100);
+        scrollPaneTematicas.setBounds(107, 246, 312, 100);
         scrollPaneTematicas.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.GRAY),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)
@@ -164,7 +165,7 @@ public class CrearRevista extends JDialog {
         
         yearChooser = new JYearChooser();
         yearChooser.getSpinner().setFont(new Font("Tahoma", Font.PLAIN, 18));
-        yearChooser.setBounds(107, 425, 100, 30);
+        yearChooser.setBounds(107, 493, 100, 30);
         contentPanel.add(yearChooser);
         
         JLabel lblMedio = new JLabel("Buscar Medio:");
@@ -175,7 +176,7 @@ public class CrearRevista extends JDialog {
         
         textFieldMedio = new JTextField();
         textFieldMedio.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        textFieldMedio.setBounds(142, 29, 96, 30);
+        textFieldMedio.setBounds(141, 26, 96, 30);
         contentPanel.add(textFieldMedio);
         textFieldMedio.setColumns(10);
         
@@ -193,10 +194,22 @@ public class CrearRevista extends JDialog {
         btnNewButton.setBounds(267, 33, 89, 23);
         contentPanel.add(btnNewButton);
         
-        JLabel lblNewLabel = new JLabel("");
-        lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
-        lblNewLabel.setBounds(0, 0, 504, 527);
-        contentPanel.add(lblNewLabel);
+        JLabel lblISMN = new JLabel("ISMN:");
+        lblISMN.setForeground(Color.WHITE);
+        lblISMN.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblISMN.setBounds(20, 114, 77, 14);
+        contentPanel.add(lblISMN);
+        
+        textFieldISMN = new JTextField();
+        textFieldISMN.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        textFieldISMN.setBounds(107, 103, 312, 37);
+        contentPanel.add(textFieldISMN);
+        textFieldISMN.setColumns(10);
+        
+        JLabel lblFondo = new JLabel("");
+        lblFondo.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
+        lblFondo.setBounds(0, 0, 504, 598);
+        contentPanel.add(lblFondo);
     }
 
     private void setupButtons() {
@@ -284,5 +297,44 @@ public class CrearRevista extends JDialog {
         if (medio != null) {
             textFieldMedio.setText(String.valueOf(medio.numRegistro));
         }
+    }
+    
+    
+    private boolean validateForm() {
+        // Validar ISBN
+        if (textFieldISMN.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El campo ISMN no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            textFieldISMN.requestFocus();
+            return false;
+        }
+        
+        // Validar Título
+        if (textFieldTitulo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "El campo Título no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            textFieldTitulo.requestFocus();
+            return false;
+        }
+        
+        // Validar Temática
+        if (selectedItemLabel.getText().contains("Ninguna")) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una temática", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // Validar que se hayan ingresado artículos
+        if (textAreaIndice.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar al menos un artículo", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            textAreaIndice.requestFocus();
+            return false;
+        }
+        
+        // Validar que se haya seleccionado un Medio
+        if (textFieldMedio.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un medio", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // Si todas las validaciones pasan, retornar true
+        return true;
     }
 }

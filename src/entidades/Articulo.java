@@ -15,6 +15,13 @@ public class Articulo {
         this.setRevista(revista);
         this.setMedio(medio);
     }
+    
+    // CONSTRUCTOR SIN ID
+    public Articulo(String nombre, Revistas revista , Medio medio) {
+        this.setNombre(nombre);
+        this.setRevista(revista);
+        this.setMedio(medio);
+    }
 
     // GETTERS AND SETTERS
     public int getIdArticulo() {

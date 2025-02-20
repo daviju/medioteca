@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 import graphic.*;
 import entidades.*;
@@ -292,6 +294,132 @@ public class MetodosGraficos {
 	            JOptionPane.ERROR_MESSAGE);
 	    }
 	}
+	
+	
+	
+	// GUARDAR REVISTA
+	public static void guardarRevista(CrearRevista crearRevista) {
+    try {
+        // Obtener los datos del formulario
+        String titulo = crearRevista.textFieldTitulo.getText().trim();
+        String tematica = crearRevista.selectedItemLabel.getText()
+            .replace("Temática seleccionada: ", "").trim();
+        int numPaginas = (int) crearRevista.spinnerNumPaginas.getValue();
+        String articulosTexto = crearRevista.textAreaIndice.getText().trim();
+        int anio = crearRevista.yearChooser.getYear();
+        
+        // Obtener el ID del medio y convertirlo
+        String medioId = crearRevista.textFieldMedio.getText().trim();
+        
+        // Validaciones
+        if (titulo.isEmpty()) {
+            JOptionPane.showMessageDialog(crearRevista, 
+                "El título no puede estar vacío", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (tematica.equals("Ninguna")) {
+            JOptionPane.showMessageDialog(crearRevista, 
+                "Debe seleccionar una temática", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (medioId.isEmpty()) {
+            JOptionPane.showMessageDialog(crearRevista, 
+                "Debe seleccionar un medio", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (articulosTexto.isEmpty()) {
+            JOptionPane.showMessageDialog(crearRevista, 
+                "Debe ingresar al menos un artículo", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener el medio base
+        int numRegistro = Integer.parseInt(medioId);
+        Medio medioBase = RepoMedio.findById(numRegistro);
+        
+        if (medioBase == null) {
+            JOptionPane.showMessageDialog(crearRevista, 
+                "No se encontró el medio base", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Crear lista de artículos vacía (se añadirán después)
+        List<Articulo> articulos = new ArrayList<>();
+        
+        // Crear la revista con el constructor que incluye ISBN
+        Revistas revista = new Revistas(
+            medioBase.getNumRegistro(),
+            medioBase.getFechaAdquisicion(),
+            medioBase.getPrecioCompra(),
+            medioBase.getNumEjemplares(),
+            "", // ISBN (se puede generar o dejar vacío según requerimientos)
+            titulo,
+            tematica,
+            articulos, // Lista vacía inicial
+            LocalDate.of(anio, 1, 1),
+            numPaginas
+        );
+        
+        // Guardar la revista en la base de datos
+        int resultado = RepoRevistas.create(revista);
+        
+        if (resultado > 0) {
+            // Si la revista se guardó correctamente, crear y guardar los artículos
+            String[] lineasArticulos = articulosTexto.split("\n");
+            
+            for (String nombreArticulo : lineasArticulos) {
+                
+            	if (!nombreArticulo.trim().isEmpty()) {
+                    // Crear artículo con ID temporal (la base de datos asignará el real)
+                    Articulo articulo = new Articulo(
+                        nombreArticulo.trim(),
+                        revista,
+                        medioBase
+                    );
+                    RepoArticulo.create(articulo);
+                }
+            }
+            
+            JOptionPane.showMessageDialog(crearRevista, 
+                "Revista creada exitosamente", 
+                "Éxito", 
+                JOptionPane.INFORMATION_MESSAGE);
+            crearRevista.dispose(); // Cerrar el diálogo
+        } else {
+            JOptionPane.showMessageDialog(crearRevista, 
+                "Error al crear la revista", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+        
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(crearRevista, 
+            "Error en el formato de los números: " + e.getMessage(), 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(crearRevista, 
+            "Error al guardar la revista: " + e.getMessage(), 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
 	
 	
 	
