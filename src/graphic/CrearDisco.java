@@ -199,9 +199,8 @@ public class CrearDisco extends JDialog {
 	                
 	                if (respuesta == JOptionPane.YES_OPTION) {
 	                    String ismn = textFieldISMN.getText().trim();
-	                    String registro = textFieldMedio.getText().trim();
 	                    
-	                    CrearCancion crearCancionDialog = new CrearCancion(ismn,registro);
+	                    CrearCancion crearCancionDialog = new CrearCancion(ismn);
 	                    crearCancionDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	                    crearCancionDialog.setVisible(true);
 	                }

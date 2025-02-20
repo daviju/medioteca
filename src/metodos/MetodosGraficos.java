@@ -478,29 +478,30 @@ public class MetodosGraficos {
 		
 		// GUARDAR CANCIONES
 		public static void guardarCancion(JTextField textFieldTitulo, JSpinner spinnerDuracion,
-		        String discoISMN, JTextField textFieldMedio) {
+		        String discoISMN) {
 		    
 		    try {
 		        // Recoger los datos
 		        String titulo = textFieldTitulo.getText().trim();
 		        int duracionMinutos = (int) spinnerDuracion.getValue();
-		        int discoMedioNumRegistro = Integer.parseInt(textFieldMedio.getText().trim());
 		        
 		        // Debug - Imprimir valores
 		        System.out.println("Título canción: " + titulo);
 		        System.out.println("Duración (minutos): " + duracionMinutos);
 		        System.out.println("ISMN del disco: " + discoISMN);
-		        System.out.println("Num Registro Medio: " + discoMedioNumRegistro);
 		        
 		        Discos disco = RepoDiscos.findByISMN(discoISMN);
-		        Medio medio = RepoMedio.findById(disco.getNumRegistro());
+		        
+		        int registro = disco.numRegistro;
+		        
+		        Medio m = RepoMedio.findById(registro);
 		        
 		        // Crear canción
 		        Cancion cancion = new Cancion(
 		            titulo,
 		            disco,
 		            duracionMinutos,
-		            medio
+		            m
 		        );
 		        
 		        // Guardar la canción

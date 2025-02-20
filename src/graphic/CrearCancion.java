@@ -15,16 +15,16 @@ public class CrearCancion extends JDialog {
     private final JPanel contentPanel = new JPanel();
     private JTextField txtTitulo;
     private JSpinner spinnerDuracion;
-    private JList<String> listInterpretes;
-    private DefaultListModel<String> listModelInterpretes;
-    private JScrollPane scrollPaneInterpretes;
+    
+    public static String discoISMN;
+
 
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
         try {
-            CrearCancion dialog = new CrearCancion(String discoISMN, String registro);
+            CrearCancion dialog = new CrearCancion(discoISMN);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setVisible(true);
         } catch (Exception e) {
@@ -35,14 +35,13 @@ public class CrearCancion extends JDialog {
     /**
      * Create the dialog.
      */
-    public CrearCancion(String discoISMN, String registro) {
+    public CrearCancion(String discoISMN) {
         this.discoISMN = discoISMN;
-        this.registro = registro;
         
     	setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 18));
     	setTitle("Crear Cancion");
     	setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\Logo.png"));
-        setBounds(100, 100, 450, 320);
+        setBounds(100, 100, 450, 221);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setLayout(null); // Usamos AbsoluteLayout
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -73,54 +72,11 @@ public class CrearCancion extends JDialog {
         spinnerDuracion.setBounds(120, 70, 100, 30); // Posición absoluta
         contentPanel.add(spinnerDuracion);
 
-        // Intérprete
-        JLabel lblInterprete = new JLabel("Intérprete:");
-        lblInterprete.setForeground(Color.WHITE);
-        lblInterprete.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblInterprete.setBounds(10, 120, 100, 30); // Posición absoluta
-        contentPanel.add(lblInterprete);
-
-        // Crear lista de intérpretes
-        listModelInterpretes = new DefaultListModel<>();
-        String[] interpretes = {
-            "Shakira",
-            "Bad Bunny",
-            "Ed Sheeran",
-            "Adele",
-            "Juanes"
-        };
-        for (String interprete : interpretes) {
-            listModelInterpretes.addElement(interprete);
-        }
-
-        // Crear y configurar la lista JList
-        listInterpretes = new JList<>(listModelInterpretes);
-        listInterpretes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listInterpretes.setFont(new Font("Tahoma", Font.PLAIN, 16));
-        listInterpretes.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        listInterpretes.setBackground(new Color(250, 250, 250));
-
-        // Agregar listener de selección
-        listInterpretes.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    String selected = listInterpretes.getSelectedValue();
-                    if (selected != null) {
-                        System.out.println("Intérprete seleccionado: " + selected);
-                    }
-                }
-            }
-        });
-
-        // Crear y configurar el JScrollPane
-        scrollPaneInterpretes = new JScrollPane(listInterpretes);
-        scrollPaneInterpretes.setBounds(120, 120, 250, 100); // Posición absoluta
-        contentPanel.add(scrollPaneInterpretes);
         
-        JLabel lblFondo = new JLabel("");
-        lblFondo.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
-        lblFondo.setBounds(0, 0, 436, 322);
-        contentPanel.add(lblFondo);
+        JLabel lblNewLabel = new JLabel("");
+        lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
+        lblNewLabel.setBounds(0, 0, 436, 193);
+        contentPanel.add(lblNewLabel);
 
         // Botones
         JPanel buttonPane = new JPanel();
@@ -134,24 +90,33 @@ public class CrearCancion extends JDialog {
             okButton.addActionListener(new ActionListener() {
             	public void actionPerformed(ActionEvent e) {
                     if (validateForm()) {
-                        // Estos valores deberían pasarse al crear el diálogo o establecerse de alguna manera
-                        String discoISMN = /* obtener de algún lugar */;
-                        int discoMedioNumRegistro = /* obtener de algún lugar */;
-                        
                         MetodosGraficos.guardarCancion(
                             txtTitulo,
                             spinnerDuracion,
-                            discoISMN,
-                            discoMedioNumRegistro
+                            discoISMN
                         );
                         
-                        if (/* la operación fue exitosa */) {
-                            dispose(); // Cerrar el diálogo
+                        // Preguntar si quiere añadir más canciones
+                        int respuesta = JOptionPane.showConfirmDialog(
+                            CrearCancion.this,
+                            "¿Desea añadir otra canción?",
+                            "Continuar",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+                        );
+
+                        if (respuesta == JOptionPane.YES_OPTION) {
+                            // Limpiar campos
+                            txtTitulo.setText("");
+                            spinnerDuracion.setValue(1);
+                            txtTitulo.requestFocus();
+                        } else {
+                            dispose();
                         }
                     }
-                }
+            	}
             });
-            }
+            
             buttonPane.add(okButton);
             getRootPane().setDefaultButton(okButton);
         }

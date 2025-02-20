@@ -11,7 +11,7 @@ public class RepoCancion {
 // FIND BY Disco
 public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
     ArrayList<Cancion> listaCanciones = new ArrayList<>();
-    String sql = "SELECT * FROM cancion WHERE Disco_ISMN = ?";
+    String sql = "SELECT * FROM cancion WHERE Discos_ISMN = ?";
 
     try {
         PreparedStatement st = ConexionDB.con.prepareStatement(sql);
@@ -41,7 +41,7 @@ public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
     // CREATE
     public static int create(Cancion cancion) {
         int resultado = 0;
-        String sql = "INSERT INTO cancion (idCancion, nombre, duracionMinutos, Disco_ISMN, Discos_Medio_num_registro) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cancion (idCancion, nombre, duracionMinutos, Discos_ISMN, Discos_Medio_num_registro) VALUES (?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
@@ -88,8 +88,8 @@ public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
                 int idCanc = rs.getInt("idCancion");
                 String nombre = rs.getString("nombre");
 
-                Discos disco = RepoDiscos.findByISMN(rs.getString("disco_id"));
-                Medio m = RepoMedio.findById(rs.getInt("num_registro"));
+                Discos disco = RepoDiscos.findByISMN(rs.getString("Discos_ISMN"));
+                Medio m = RepoMedio.findById(rs.getInt("Discos_Medio_num_registro"));
 
                 int duracionMinutos = rs.getInt("duracionMinutos");
 
@@ -107,7 +107,7 @@ public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
     // MODIFY
     public static int modify(Cancion cancion) {
         int resultado = 0;
-        String sql = "UPDATE cancion SET nombre = ?, duracionMinutos = ?, Disco_ISMN = ?, Discos_Medio_num_registro = ?  WHERE idCancion = ?";
+        String sql = "UPDATE cancion SET nombre = ?, duracionMinutos = ?, Discos_ISMN = ?, Discos_Medio_num_registro = ?  WHERE idCancion = ?";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
