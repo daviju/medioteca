@@ -12,8 +12,8 @@ public class RepoCancion {
 	public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
 	    ArrayList<Cancion> listaCanciones = new ArrayList<>();
 	    String sql = "SELECT c.*, d.titulo as disco_titulo FROM cancion c " +
-	                "JOIN discos d ON d.ISMN = c.Disco_ISMN " +
-	                "WHERE c.Disco_ISMN = ?";
+	                "JOIN discos d ON d.ISMN = c.Discos_ISMN " +
+	                "WHERE c.Discos_ISMN = ?";
 
 	    try {
 	        PreparedStatement st = ConexionDB.con.prepareStatement(sql);
@@ -51,11 +51,10 @@ public class RepoCancion {
     // CREATE
     public static int create(Cancion cancion) {
         int resultado = 0;
-        String sql = "INSERT INTO cancion (idCancion, nombre, duracionMinutos, Discos_ISMN, Discos_Medio_num_registro) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cancion (nombre, duracionMinutos, Discos_ISMN, Discos_Medio_num_registro) VALUES (?, ?, ?, ?)";
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
-            st.setInt(1, cancion.getIdCancion());
             st.setString(2, cancion.getNombre());
             st.setInt(3, cancion.getDuracionMinutos());
             st.setString(4, cancion.getDisco().getISMN()); // Solo guardamos el ISMN
