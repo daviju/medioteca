@@ -349,19 +349,17 @@ public class MetodosGraficos {
 	        int resultadoRevista = RepoRevistas.create(revista);
 	        
 	        if (resultadoRevista > 0) {
-	            // La revista se creó exitosamente, ahora creamos los artículos
 	            boolean todosArticulosCreados = true;
 	            
 	            // Dividir el texto del área de índice en líneas
 	            String[] lineasArticulos = textAreaIndice.getText().split("\n");
 	            
 	            for (String nombreArticulo : lineasArticulos) {
+	            	
 	                if (!nombreArticulo.trim().isEmpty()) {
-	                    // Crear artículo con id 0 (la BD asignará el id real por ser autoincremental)
 	                    Articulo articulo = new Articulo(
-	                        0,  // id autoincremental
 	                        nombreArticulo.trim(),
-	                        revista,  // ya tiene el ISBN
+	                        revista,
 	                        medioBase
 	                    );
 	                    
