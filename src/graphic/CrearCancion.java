@@ -4,6 +4,9 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
+
+import metodos.MetodosGraficos;
+
 import java.awt.event.*;
 
 public class CrearCancion extends JDialog {
@@ -36,7 +39,7 @@ public class CrearCancion extends JDialog {
     	setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 18));
     	setTitle("Crear Cancion");
     	setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\Logo.png"));
-        setBounds(100, 100, 450, 400);
+        setBounds(100, 100, 450, 320);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setLayout(null); // Usamos AbsoluteLayout
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -125,6 +128,27 @@ public class CrearCancion extends JDialog {
             okButton.setForeground(Color.GREEN);
             okButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
             okButton.setActionCommand("OK");
+            okButton.addActionListener(new ActionListener() {
+            	public void actionPerformed(ActionEvent e) {
+                    if (validateForm()) {
+                        // Estos valores deberían pasarse al crear el diálogo o establecerse de alguna manera
+                        String discoISMN = /* obtener de algún lugar */;
+                        int discoMedioNumRegistro = /* obtener de algún lugar */;
+                        
+                        MetodosGraficos.guardarCancion(
+                            txtTitulo,
+                            spinnerDuracion,
+                            discoISMN,
+                            discoMedioNumRegistro
+                        );
+                        
+                        if (/* la operación fue exitosa */) {
+                            dispose(); // Cerrar el diálogo
+                        }
+                    }
+                }
+            });
+            }
             buttonPane.add(okButton);
             getRootPane().setDefaultButton(okButton);
         }
@@ -135,5 +159,32 @@ public class CrearCancion extends JDialog {
             cancelButton.addActionListener(e -> dispose());
             buttonPane.add(cancelButton);
         }
+    }
+    
+    private boolean validateForm() {
+        // Validar título
+        if (txtTitulo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "El título de la canción no puede estar vacío", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            
+            txtTitulo.requestFocus();
+            return false;
+        }
+        
+        // Validar duración
+        int duracion = (int) spinnerDuracion.getValue();
+        if (duracion <= 0) {
+            JOptionPane.showMessageDialog(this, 
+                "La duración debe ser mayor a 0", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            
+            spinnerDuracion.requestFocus();
+            return false;
+        }
+        
+        return true;
     }
 }

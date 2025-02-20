@@ -17,6 +17,14 @@ public class Cancion {
         this.setDuracionMinutos(duracionMinutos);
         this.setMedio(medio);
     }
+    
+    // Constructor sin ID
+    public Cancion(String nombre, Discos disco, int duracionMinutos, Medio medio) {
+        this.setNombre(nombre);
+        this.setDisco(disco);
+        this.setDuracionMinutos(duracionMinutos);
+        this.setMedio(medio);
+    }
 
     // Constructor sin disco
     public Cancion(int idCancion, String nombre, int duracionMinutos, Medio medio) {

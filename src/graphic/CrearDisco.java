@@ -9,6 +9,7 @@ import javax.swing.border.*;
 import com.toedter.calendar.JYearChooser;
 
 import entidades.Medio;
+import metodos.MetodosGraficos;
 
 import com.toedter.calendar.JCalendar;
 
@@ -37,7 +38,7 @@ public class CrearDisco extends JDialog {
     	setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 18));
     	setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\Logo.png"));
         setTitle("Crear Disco");
-        setBounds(100, 100, 540, 545);
+        setBounds(100, 100, 540, 433);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -106,10 +107,6 @@ public class CrearDisco extends JDialog {
         lblAnio.setBounds(20, 273, 179, 20);
         contentPanel.add(lblAnio);
         
-        JCalendar calendar = new JCalendar();
-        calendar.setBounds(20, 293, 221, 163);
-        contentPanel.add(calendar);
-        
         JLabel lblISMN = new JLabel("ISMN:");
         lblISMN.setForeground(Color.WHITE);
         lblISMN.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -156,9 +153,14 @@ public class CrearDisco extends JDialog {
         btnNewButton.setBounds(253, 22, 89, 23);
         contentPanel.add(btnNewButton);
         
+        JYearChooser yearChooser = new JYearChooser();
+        yearChooser.getSpinner().setFont(new Font("Tahoma", Font.PLAIN, 18));
+        yearChooser.setBounds(188, 266, 62, 28);
+        contentPanel.add(yearChooser);
+        
         JLabel lblFondo = new JLabel("");
         lblFondo.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
-        lblFondo.setBounds(0, 0, 526, 467);
+        lblFondo.setBounds(0, 0, 526, 355);
         contentPanel.add(lblFondo);
         
         JPanel buttonPane = new JPanel();
@@ -175,19 +177,33 @@ public class CrearDisco extends JDialog {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int respuesta = JOptionPane.showConfirmDialog(
-                    CrearDisco.this, 
-                    "El Disco actualmente se encuentra sin canciones asociadas. ¿Desea añadir canciones?", 
-                    "Advertencia", 
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-                );
-
-                if (respuesta == JOptionPane.YES_OPTION) {
-                    CrearCancion crearCancionDialog = new CrearCancion();
-                    crearCancionDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                    crearCancionDialog.setVisible(true);
-                }
+            	if (validateForm()) {
+                    MetodosGraficos.guardarDisco(
+                        textFieldISMN,
+                        textFieldTitulo,
+                        comboBoxInterprete,
+                        comboBoxEstilo,
+                        rdbtnFisico,
+                        rdbtnDigital,
+                        yearChooser,
+                        textFieldMedio
+                    );
+                
+	                int respuesta = JOptionPane.showConfirmDialog(
+	                    CrearDisco.this, 
+	                    "El Disco actualmente se encuentra sin canciones asociadas. ¿Desea añadir canciones?", 
+	                    "Advertencia", 
+	                    JOptionPane.YES_NO_OPTION,
+	                    JOptionPane.WARNING_MESSAGE
+	                );
+	                
+	                if (respuesta == JOptionPane.YES_OPTION) {
+	                    String ismn = textFieldISMN.getText().trim(); // Obtener el ISMN actual
+	                    CrearCancion crearCancionDialog = new CrearCancion(ismn); // Pasar el ISMN al constructor
+	                    crearCancionDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	                    crearCancionDialog.setVisible(true);
+	                }
+            	}
             }
         });
 
@@ -205,5 +221,47 @@ public class CrearDisco extends JDialog {
             textFieldMedio.setText(String.valueOf(medio.numRegistro));
             
         }
+    }
+    
+    private boolean validateForm() {
+        // Validar ISMN
+        if (textFieldISMN.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "El campo ISMN no puede estar vacío", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            textFieldISMN.requestFocus();
+            return false;
+        }
+        
+        // Validar Título
+        if (textFieldTitulo.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "El campo Título no puede estar vacío", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            textFieldTitulo.requestFocus();
+            return false;
+        }
+        
+        // Validar que se haya seleccionado un Medio
+        if (textFieldMedio.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Debe seleccionar un medio", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // Validar que se haya seleccionado un soporte
+        if (!rdbtnFisico.isSelected() && !rdbtnDigital.isSelected()) {
+            JOptionPane.showMessageDialog(this, 
+                "Debe seleccionar un soporte", 
+                "Error de validación", 
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
     }
 }

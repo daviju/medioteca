@@ -220,6 +220,7 @@ public class MetodosGraficos {
 	    String soporte = "";
 	    for (Enumeration<AbstractButton> buttons = soporteGroup.getElements(); buttons.hasMoreElements();) {
 	        JRadioButton button = (JRadioButton) buttons.nextElement();
+	        
 	        if (button.isSelected()) {
 	            soporte = button.getText();
 	            break;
@@ -228,14 +229,7 @@ public class MetodosGraficos {
 	    
 	    // Obtener datos del medio
 	    Medio m = RepoMedio.findById(idMedio);
-	    
-	    if (m == null) {
-	        JOptionPane.showMessageDialog(null, 
-	            "Error: No se encontró el medio con ID: " + idMedio, 
-	            "Error", 
-	            JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+
 	    
 	    // Crear lista de protagonistas
 	    List<Protagonista> protagonistas = new ArrayList<>();
@@ -297,7 +291,7 @@ public class MetodosGraficos {
 	
 	
 	
-	// GUARDAR REVISTA
+	// GUARDAR REVISTA Y ARTICULOS
 		public static void guardarRevista(JTextField textFieldISMN, JTextField textFieldTitulo, 
 	        JLabel selectedItemLabel, JSpinner spinnerNumPaginas, JTextArea textAreaIndice, 
 	        JYearChooser yearChooser, JTextField textFieldMedio) {
@@ -315,13 +309,6 @@ public class MetodosGraficos {
 		        
 		        // Obtener el medio base
 		        Medio medioBase = RepoMedio.findById(numRegistro);
-		        if (medioBase == null) {
-		            JOptionPane.showMessageDialog(null, 
-		                "No se encontró el medio base", 
-		                "Error", 
-		                JOptionPane.ERROR_MESSAGE);
-		            return;
-		        }
 		        
 		        // Crear la revista
 		        Revistas revista = new Revistas(
@@ -413,7 +400,141 @@ public class MetodosGraficos {
 		        e.printStackTrace();
 		    }
 		}
-	
+		
+		
+		
+		// GUARDAR DISCOS
+		public static void guardarDisco(JTextField textFieldISMN, JTextField textFieldTitulo, 
+		        JComboBox<String> comboBoxInterprete, JComboBox<String> comboBoxEstilo,
+		        JRadioButton rdbtnFisico, JRadioButton rdbtnDigital,
+		        JYearChooser yearChooser, JTextField textFieldMedio) {
+		    
+		    try {
+		        // Recogemos los datos
+		        String ismn = textFieldISMN.getText().trim();
+		        String titulo = textFieldTitulo.getText().trim();
+		        String interprete = comboBoxInterprete.getSelectedItem().toString();
+		        String estilo = comboBoxEstilo.getSelectedItem().toString();
+		        
+		        // Determinar el soporte basado en el radio button seleccionado
+		        String soporte = rdbtnFisico.isSelected() ? "Físico" : "Digital";
+		        
+		        int anio = yearChooser.getYear();
+		        String IDMedio = textFieldMedio.getText().trim();
+		        int numRegistro = Integer.parseInt(IDMedio);
+		        
+		        
+		        // Obtener el medio base
+		        Medio medioBase = RepoMedio.findById(numRegistro);
+		        
+		        // Crear el disco sin canciones primero
+		        Discos disco = new Discos(
+		            medioBase.getNumRegistro(),
+		            medioBase.getFechaAdquisicion(),
+		            medioBase.getPrecioCompra(),
+		            medioBase.getNumEjemplares(),
+		            
+		            ismn,
+		            titulo,
+		            interprete,
+		            estilo,
+		            soporte,
+		            LocalDate.of(anio, 1, 1)
+		        );
+		        
+		        // Guardar el disco
+		        int resultadoDisco = RepoDiscos.create(disco);
+		        
+		        if (resultadoDisco > 0) {
+		            JOptionPane.showMessageDialog(null, 
+		                "Disco creado exitosamente", 
+		                "Éxito", 
+		                JOptionPane.INFORMATION_MESSAGE);
+		            
+		        } else {
+		            JOptionPane.showMessageDialog(null, 
+		                "Error al crear el disco", 
+		                "Error", 
+		                JOptionPane.ERROR_MESSAGE);
+		        }
+		        
+		    } catch (NumberFormatException e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error en el formato de los números: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		        
+		    } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error al guardar el disco: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    }
+		}
+		
+		
+		
+		// GUARDAR CANCIONES
+		public static void guardarCancion(JTextField textFieldTitulo, JSpinner spinnerDuracion,
+		        String discoISMN, int discoMedioNumRegistro) {
+		    
+		    try {
+		        // Recoger los datos
+		        String titulo = textFieldTitulo.getText().trim();
+		        int duracionMinutos = (int) spinnerDuracion.getValue();
+		        
+		        // Debug - Imprimir valores
+		        System.out.println("Título canción: " + titulo);
+		        System.out.println("Duración (minutos): " + duracionMinutos);
+		        System.out.println("ISMN del disco: " + discoISMN);
+		        System.out.println("Num Registro Medio: " + discoMedioNumRegistro);
+		        
+		        // Obtener el disco asociado
+		        Discos disco = RepoDiscos.findByISMN(discoISMN);
+		        
+		        // Obtener el medio asociado
+		        Medio medio = RepoMedio.findById(discoMedioNumRegistro);
+		        
+		        // Crear canción
+		        Cancion cancion = new Cancion(
+		            titulo,
+		            disco,
+		            duracionMinutos,
+		            medio
+		        );
+		        
+		        // Guardar la canción
+		        int resultado = RepoCancion.create(cancion);
+		        
+		        if (resultado > 0) {
+		            JOptionPane.showMessageDialog(null, 
+		                "Canción creada exitosamente", 
+		                "Éxito", 
+		                JOptionPane.INFORMATION_MESSAGE);
+		        } else {
+		            JOptionPane.showMessageDialog(null, 
+		                "Error al crear la canción", 
+		                "Error", 
+		                JOptionPane.ERROR_MESSAGE);
+		        }
+		        
+		    } catch (NumberFormatException e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error en el formato de los números: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error al guardar la canción: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    }
+		}
+		
 	
 	
 }
