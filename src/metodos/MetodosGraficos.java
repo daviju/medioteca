@@ -485,11 +485,6 @@ public class MetodosGraficos {
 		        String titulo = textFieldTitulo.getText().trim();
 		        int duracionMinutos = (int) spinnerDuracion.getValue();
 		        
-		        // Debug - Imprimir valores
-		        System.out.println("Título canción: " + titulo);
-		        System.out.println("Duración (minutos): " + duracionMinutos);
-		        System.out.println("ISMN del disco: " + discoISMN);
-		        
 		        Discos disco = RepoDiscos.findByISMN(discoISMN);
 		        
 		        int registro = disco.numRegistro;

@@ -203,6 +203,7 @@ public class CrearDisco extends JDialog {
 	                    CrearCancion crearCancionDialog = new CrearCancion(ismn);
 	                    crearCancionDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	                    crearCancionDialog.setVisible(true);
+	                    
 	                }
             	}
             }

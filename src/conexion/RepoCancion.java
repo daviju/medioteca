@@ -8,45 +8,52 @@ import entidades.*;
 
 public class RepoCancion {
 
-// FIND BY Disco
-	public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
-	    ArrayList<Cancion> listaCanciones = new ArrayList<>();
-	    String sql = "SELECT c.*, d.titulo as disco_titulo FROM cancion c " +
-	                "JOIN discos d ON d.ISMN = c.Discos_ISMN " +
-	                "WHERE c.Discos_ISMN = ?";
+    // FIND BY Disco
+    public static ArrayList<Cancion> findByDiscoISMN(String ISMN) {
+        ArrayList<Cancion> listaCanciones = new ArrayList<>();
+        String sql = "SELECT c.*, d.titulo, d.interprete, d.estilo, d.soporte, d.anio_publicacion " +
+                    "FROM cancion c " +
+                    "JOIN discos d ON d.ISMN = c.Discos_ISMN " +
+                    "AND d.Medio_num_registro = c.Discos_Medio_num_registro " +
+                    "WHERE c.Discos_ISMN = ?";
 
-	    try {
-	        PreparedStatement st = ConexionDB.con.prepareStatement(sql);
-	        st.setString(1, ISMN);
-	        ResultSet rs = st.executeQuery();
+        try {
+            PreparedStatement st = ConexionDB.con.prepareStatement(sql);
+            st.setString(1, ISMN);
+            ResultSet rs = st.executeQuery();
 
-	        while (rs.next()) {
-	            // Obtener el medio
-	            Medio medio = RepoMedio.findById(rs.getInt("Discos_Medio_num_registro"));
-	        	
-	            Discos disco = new Discos();
-	            medio.getNumRegistro();
-	            medio.getFechaAdquisicion();
-	            medio.getPrecioCompra();
-	            medio.getNumEjemplares();
-	            
-	            disco.setISMN(ISMN);
-	            disco.setTitulo(rs.getString("disco_titulo"));
+            while (rs.next()) {
+                // Obtener el medio asociado
+                Medio medio = RepoMedio.findById(rs.getInt("Discos_Medio_num_registro"));
 
-	            Cancion cancion = new Cancion(
-	                rs.getInt("idCancion"),
-	                rs.getString("nombre"),
-	                disco,
-	                rs.getInt("duracionMinutos"),
-	                medio
-	            );
-	            listaCanciones.add(cancion);
-	        }
-	    } catch (SQLException e) {
-	        System.err.println("Error en findByDiscoISMN: " + e.getMessage());
-	    }
-	    return listaCanciones;
-	}
+                Discos disco = new Discos(
+                    medio.getNumRegistro(),
+                    medio.getFechaAdquisicion(),
+                    medio.getPrecioCompra(),
+                    medio.getNumEjemplares(),
+                    
+                    ISMN,
+                    rs.getString("titulo"),
+                    rs.getString("interprete"),
+                    rs.getString("estilo"),
+                    rs.getString("soporte"),
+                    rs.getDate("anio_publicacion") != null ? rs.getDate("anio_publicacion").toLocalDate() : null
+                );
+
+                Cancion cancion = new Cancion(
+                    rs.getInt("idCancion"),
+                    rs.getString("nombre"),
+                    disco,
+                    rs.getInt("duracionMinutos"),
+                    medio
+                );
+                listaCanciones.add(cancion);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error en findByDiscoISMN: " + e.getMessage());
+        }
+        return listaCanciones;
+    }
 
     // CREATE
     public static int create(Cancion cancion) {
@@ -55,10 +62,10 @@ public class RepoCancion {
 
         try {
             PreparedStatement st = ConexionDB.con.prepareStatement(sql);
-            st.setString(2, cancion.getNombre());
-            st.setInt(3, cancion.getDuracionMinutos());
-            st.setString(4, cancion.getDisco().getISMN()); // Solo guardamos el ISMN
-            st.setInt(5, cancion.getMedio().getNumRegistro()); // Solo guardamos el número de registro
+            st.setString(1, cancion.getNombre());
+            st.setInt(2, cancion.getDuracionMinutos());
+            st.setString(3, cancion.getDisco().getISMN()); // Solo guardamos el ISMN
+            st.setInt(4, cancion.getMedio().getNumRegistro()); // Solo guardamos el número de registro
 
             resultado = st.executeUpdate();
         } catch (SQLException e) {
