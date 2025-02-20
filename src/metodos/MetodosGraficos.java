@@ -478,12 +478,13 @@ public class MetodosGraficos {
 		
 		// GUARDAR CANCIONES
 		public static void guardarCancion(JTextField textFieldTitulo, JSpinner spinnerDuracion,
-		        String discoISMN, int discoMedioNumRegistro) {
+		        String discoISMN, JTextField textFieldMedio) {
 		    
 		    try {
 		        // Recoger los datos
 		        String titulo = textFieldTitulo.getText().trim();
 		        int duracionMinutos = (int) spinnerDuracion.getValue();
+		        int discoMedioNumRegistro = Integer.parseInt(textFieldMedio.getText().trim());
 		        
 		        // Debug - Imprimir valores
 		        System.out.println("Título canción: " + titulo);
@@ -491,11 +492,8 @@ public class MetodosGraficos {
 		        System.out.println("ISMN del disco: " + discoISMN);
 		        System.out.println("Num Registro Medio: " + discoMedioNumRegistro);
 		        
-		        // Obtener el disco asociado
 		        Discos disco = RepoDiscos.findByISMN(discoISMN);
-		        
-		        // Obtener el medio asociado
-		        Medio medio = RepoMedio.findById(discoMedioNumRegistro);
+		        Medio medio = RepoMedio.findById(disco.getNumRegistro());
 		        
 		        // Crear canción
 		        Cancion cancion = new Cancion(
@@ -513,6 +511,12 @@ public class MetodosGraficos {
 		                "Canción creada exitosamente", 
 		                "Éxito", 
 		                JOptionPane.INFORMATION_MESSAGE);
+		                
+		            // Limpiar los campos
+		            textFieldTitulo.setText("");
+		            spinnerDuracion.setValue(0);
+		            textFieldTitulo.requestFocus();
+		            
 		        } else {
 		            JOptionPane.showMessageDialog(null, 
 		                "Error al crear la canción", 
@@ -525,12 +529,14 @@ public class MetodosGraficos {
 		            "Error en el formato de los números: " + e.getMessage(), 
 		            "Error", 
 		            JOptionPane.ERROR_MESSAGE);
+		        
 		        e.printStackTrace();
 		    } catch (Exception e) {
 		        JOptionPane.showMessageDialog(null, 
 		            "Error al guardar la canción: " + e.getMessage(), 
 		            "Error", 
 		            JOptionPane.ERROR_MESSAGE);
+		        
 		        e.printStackTrace();
 		    }
 		}

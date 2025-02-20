@@ -198,8 +198,10 @@ public class CrearDisco extends JDialog {
 	                );
 	                
 	                if (respuesta == JOptionPane.YES_OPTION) {
-	                    String ismn = textFieldISMN.getText().trim(); // Obtener el ISMN actual
-	                    CrearCancion crearCancionDialog = new CrearCancion(ismn); // Pasar el ISMN al constructor
+	                    String ismn = textFieldISMN.getText().trim();
+	                    String registro = textFieldMedio.getText().trim();
+	                    
+	                    CrearCancion crearCancionDialog = new CrearCancion(ismn,registro);
 	                    crearCancionDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	                    crearCancionDialog.setVisible(true);
 	                }

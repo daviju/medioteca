@@ -24,7 +24,7 @@ public class CrearCancion extends JDialog {
      */
     public static void main(String[] args) {
         try {
-            CrearCancion dialog = new CrearCancion();
+            CrearCancion dialog = new CrearCancion(String discoISMN, String registro);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setVisible(true);
         } catch (Exception e) {
@@ -35,7 +35,10 @@ public class CrearCancion extends JDialog {
     /**
      * Create the dialog.
      */
-    public CrearCancion() {
+    public CrearCancion(String discoISMN, String registro) {
+        this.discoISMN = discoISMN;
+        this.registro = registro;
+        
     	setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 18));
     	setTitle("Crear Cancion");
     	setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\Logo.png"));
