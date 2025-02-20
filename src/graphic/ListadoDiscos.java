@@ -49,7 +49,7 @@ public class ListadoDiscos extends JDialog {
 					new Object[][] {
 					},
 					new String[] {
-						"ISMN", "Titulo", "Interprete", "Estilo", "Soporte", "Año de Publicación", "ID Medio"
+						"ISMN", "Titulo", "Interprete", "Estilo", "Soporte", "A\u00F1o de Publicaci\u00F3n","Canciones", "ID Medio"
 					}
 				));
 				table.setFont(new Font("Tahoma", Font.PLAIN, 18));
