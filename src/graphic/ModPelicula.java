@@ -45,8 +45,9 @@ public class ModPelicula extends JDialog {
     public static DefaultTableModel modelAñadidos;
     public static ButtonGroup soporteGroup;
     public static JTextField textFieldPelicula;
-    
+
     public static JComboBox<String> comboBoxEstilo;
+
     public static JSpinner spinnerDuracion;
     public static JYearChooser yearChooser;
     public static JRadioButton rdbtnFisico;
@@ -137,7 +138,7 @@ public class ModPelicula extends JDialog {
         lblEstilo.setBounds(25, 210, 62, 23);
         contentPanel.add(lblEstilo);
 
-        JComboBox comboBoxEstilo = new JComboBox();
+        JComboBox comboBoxEstilo = new JComboBox<>();
         comboBoxEstilo.setFont(new Font("Tahoma", Font.PLAIN, 18));
         comboBoxEstilo.setBounds(97, 205, 275, 32);
         contentPanel.add(comboBoxEstilo);

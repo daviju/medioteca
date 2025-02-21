@@ -78,19 +78,21 @@ public class BuscaPelicula extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 // Verifica si hay una fila seleccionada en la tabla  
                 if (table.getSelectedRow() != -1) {  
-                    // Obtiene la película correspondiente a la fila seleccionada  
-                    peliculaSeleccionada = MetodosGraficos.devuelvePelicula(table, (ModPelicula)parent);
-
-                    // Asigna la película seleccionada al padre
-                    if (parent instanceof ModPelicula) {  
-                        ((ModPelicula) parent).setPeliculaSeleccionada(peliculaSeleccionada);  
+                    // Obtiene la película seleccionada
+                    peliculaSeleccionada = MetodosGraficos.devuelvePelicula(table);  
+                    
+                    // Asigna la película seleccionada al padre y rellena el formulario
+                    if (parent instanceof ModPelicula && peliculaSeleccionada != null) {  
+                        ModPelicula modPelicula = (ModPelicula) parent;
+                        modPelicula.setPeliculaSeleccionada(peliculaSeleccionada);
+                        MetodosGraficos.rellenarFormularioPelicula(peliculaSeleccionada, modPelicula);
                     }  
                     
                     // Cierra el cuadro de diálogo  
                     dispose();  
                 }  
             }  
-        });  
+        });
 
         buttonPane.add(okButton);
         getRootPane().setDefaultButton(okButton);

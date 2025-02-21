@@ -217,86 +217,76 @@ public class MetodosGraficos {
 	
 	
 	// Devuelve Pelicula seleccionada
-	public static void devuelvePelicula(JTable tabla, ModPelicula dialog) {
+	public static Peliculas devuelvePelicula(JTable tabla) {
 	    int filaSeleccionada = tabla.getSelectedRow();
-
+	    
 	    if (filaSeleccionada == -1) {
-	        JOptionPane.showMessageDialog(null, 
-	            "Por favor, seleccione una película", 
-	            "Error", 
-	            JOptionPane.ERROR_MESSAGE);
-	        return;
+	        return null;
 	    }
-
+	    
 	    try {
 	        TableModel modelo = tabla.getModel();
 	        String isan = modelo.getValueAt(filaSeleccionada, 0).toString();
-
-	        // Buscamos la película completa en la base de datos
-	        Peliculas pelicula = RepoPelicula.findByISAN(isan);
-
-	        if (pelicula == null) {
-	            JOptionPane.showMessageDialog(dialog,
-	                "No se encontró la película con ISAN: " + isan,
-	                "Error",
-	                JOptionPane.ERROR_MESSAGE);
-	            return;
-	        }
-
-	        // Rellenamos los campos del diálogo
-	        dialog.textFieldPelicula.setText(isan);
+	        return RepoPelicula.findByISAN(isan);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+	public static void rellenarFormularioPelicula(Peliculas pelicula, ModPelicula dialog) {
+	    if (pelicula != null) {
+	        dialog.textFieldPelicula.setText(String.valueOf(pelicula.getNumRegistro()));
 	        dialog.textFieldISAN.setText(pelicula.getISAN());
 	        dialog.textFieldTitulo.setText(pelicula.getTitulo());
 	        dialog.textFieldDirector.setText(pelicula.getDirector());
-
-	        // Seleccionar estilo
+	        
+	        // Establecer el estilo en el comboBox
 	        dialog.comboBoxEstilo.setSelectedItem(pelicula.getEstilo());
-
-	        // Establecer el soporte (Físico/Digital)
-	        Enumeration<AbstractButton> buttons = dialog.soporteGroup.getElements();
-	        while (buttons.hasMoreElements()) {
-	            JRadioButton button = (JRadioButton) buttons.nextElement();
-	            if (button.getText().equals(pelicula.getSoporte())) {
-	                button.setSelected(true);
-	                break;
-	            }
+	        
+	        // Establecer el soporte
+	        if ("Físico".equals(pelicula.getSoporte())) {
+	            dialog.rdbtnFisico.setSelected(true);
+	        } else {
+	            dialog.rdbtnDigital.setSelected(true);
 	        }
-
-	        // Establecer duración y año de publicación
+	        
+	        // Establecer la duración
 	        dialog.spinnerDuracion.setValue(pelicula.getDuracion());
+	        
+	        // Establecer el año de publicación
 	        if (pelicula.getAnioPublicacion() != null) {
 	            dialog.yearChooser.setYear(pelicula.getAnioPublicacion().getYear());
 	        }
-
+	        
 	        // Limpiar tablas
 	        dialog.modelTodos.setRowCount(0);
 	        dialog.modelAñadidos.setRowCount(0);
-
+	        
 	        // Obtener todos los protagonistas
-	        ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
+	        ArrayList<Protagonista> todosProtagonistas = (ArrayList<Protagonista>) RepoProtagonista.findAll();
 	        List<Protagonista> protasEnPelicula = pelicula.getProtagonistas();
-
-	        // Rellenar tabla de protagonistas de la película
+	        
+	        // Primero, rellenar la tabla de protagonistas de la película
 	        for (Protagonista prota : protasEnPelicula) {
-	            dialog.modelAñadidos.addRow(new Object[]{ prota.getIdProta(), prota.getNombre() });
+	            dialog.modelAñadidos.addRow(new Object[]{
+	                prota.getIdProta(),
+	                prota.getNombre()
+	            });
 	        }
-
-	        // Rellenar tabla de disponibles (excluyendo los que ya están en la película)
+	        
+	        // Luego, rellenar la tabla de protagonistas disponibles
 	        for (Protagonista prota : todosProtagonistas) {
 	            if (!protasEnPelicula.contains(prota)) {
-	                dialog.modelTodos.addRow(new Object[]{ prota.getIdProta(), prota.getNombre() });
+	                dialog.modelTodos.addRow(new Object[]{
+	                    prota.getIdProta(),
+	                    prota.getNombre()
+	                });
 	            }
 	        }
-
-	        // Hacer que el ISAN no sea editable
+	        
+	        // Hacemos no editable el ISAN
 	        dialog.textFieldISAN.setEditable(false);
-
-	    } catch (Exception e) {
-	        JOptionPane.showMessageDialog(dialog,
-	            "Error al cargar la película: " + e.getMessage(),
-	            "Error",
-	            JOptionPane.ERROR_MESSAGE);
-	        e.printStackTrace();
 	    }
 	}
 
