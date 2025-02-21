@@ -91,9 +91,14 @@ public class ModMedio extends JDialog {
 		contentPanel.add(textFieldNumRegistro);
 		textFieldNumRegistro.setColumns(10);
 		
+		JButton btnNewButton_1 = new JButton("Buscar Medio");
+		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btnNewButton_1.setBounds(328, 28, 154, 23);
+		contentPanel.add(btnNewButton_1);
+		
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
-		lblNewLabel.setBounds(0, 0, 507, 419);
+		lblNewLabel.setBounds(0, 0, 507, 409);
 		contentPanel.add(lblNewLabel);
 		{
 			JPanel buttonPane = new JPanel();
