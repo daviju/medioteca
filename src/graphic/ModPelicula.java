@@ -45,9 +45,7 @@ public class ModPelicula extends JDialog {
     public static DefaultTableModel modelAñadidos;
     public static ButtonGroup soporteGroup;
     public static JTextField textFieldPelicula;
-
     public static JComboBox<String> comboBoxEstilo;
-
     public static JSpinner spinnerDuracion;
     public static JYearChooser yearChooser;
     public static JRadioButton rdbtnFisico;
@@ -113,12 +111,12 @@ public class ModPelicula extends JDialog {
 
         soporteGroup = new ButtonGroup();
         
-        JRadioButton rdbtnFisico = new JRadioButton("Físico");
+        rdbtnFisico = new JRadioButton("Físico");
         rdbtnFisico.setFont(new Font("Tahoma", Font.PLAIN, 18));
         rdbtnFisico.setBounds(501, 31, 81, 23);
         contentPanel.add(rdbtnFisico);
 
-        JRadioButton rdbtnDigital = new JRadioButton("Digital");
+        rdbtnDigital = new JRadioButton("Digital");
         rdbtnDigital.setFont(new Font("Tahoma", Font.PLAIN, 18));
         rdbtnDigital.setBounds(584, 31, 81, 23);
         contentPanel.add(rdbtnDigital);
@@ -138,7 +136,7 @@ public class ModPelicula extends JDialog {
         lblEstilo.setBounds(25, 210, 62, 23);
         contentPanel.add(lblEstilo);
 
-        JComboBox comboBoxEstilo = new JComboBox<>();
+        comboBoxEstilo = new JComboBox<>();
         comboBoxEstilo.setFont(new Font("Tahoma", Font.PLAIN, 18));
         comboBoxEstilo.setBounds(97, 205, 275, 32);
         contentPanel.add(comboBoxEstilo);
@@ -150,7 +148,7 @@ public class ModPelicula extends JDialog {
         comboBoxEstilo.addItem("Suspense");
         comboBoxEstilo.addItem("Miedo");
 
-        JSpinner spinnerDuracion = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
+        spinnerDuracion = new JSpinner(new SpinnerNumberModel(0, 0, 999, 1));
         spinnerDuracion.setFont(new Font("Tahoma", Font.PLAIN, 18));
         spinnerDuracion.setBounds(516, 89, 104, 20);
         contentPanel.add(spinnerDuracion);
@@ -161,7 +159,7 @@ public class ModPelicula extends JDialog {
         lblDuracion.setBounds(425, 89, 81, 20);
         contentPanel.add(lblDuracion);
 
-        JYearChooser yearChooser = new JYearChooser();
+        yearChooser = new JYearChooser();
         yearChooser.getSpinner().setFont(new Font("Tahoma", Font.PLAIN, 18));
         yearChooser.setBounds(603, 133, 62, 23);
         contentPanel.add(yearChooser);
@@ -322,63 +320,109 @@ public class ModPelicula extends JDialog {
         cancelButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
         cancelButton.setForeground(Color.RED);
         cancelButton.addActionListener(e -> dispose());
-        buttonPane.add(cancelButton);
-        
-        
     }
-
-    private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
-        modelTodos.setRowCount(0);
-        for (Protagonista prota : protagonistas) {
-            modelTodos.addRow(new Object[]{
-                prota.getIdProta(),
-                prota.getNombre()
-            });
-        }
-    }
-
-    private void moveProta(JTable fromTable, JTable toTable, DefaultTableModel fromModel, DefaultTableModel toModel) {
-        int fila = fromTable.getSelectedRow();
-        if (fila != -1) {
-            Object[] datos = new Object[fromTable.getColumnCount()];
-            for (int i = 0; i < fromTable.getColumnCount(); i++) {
-                datos[i] = fromModel.getValueAt(fila, i);
+        
+        private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
+            modelTodos.setRowCount(0);
+            for (Protagonista prota : protagonistas) {
+                modelTodos.addRow(new Object[]{
+                    prota.getIdProta(),
+                    prota.getNombre()
+                });
             }
-            toModel.addRow(datos);
-            fromModel.removeRow(fila);
         }
-    }
 
-    private boolean validateForm() {
-        if (textFieldISAN.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El campo ISAN no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
-            textFieldISAN.requestFocus();
-            return false;
+        private void moveProta(JTable fromTable, JTable toTable, DefaultTableModel fromModel, DefaultTableModel toModel) {
+            int fila = fromTable.getSelectedRow();
+            if (fila != -1) {
+                Object[] datos = new Object[fromTable.getColumnCount()];
+                for (int i = 0; i < fromTable.getColumnCount(); i++) {
+                    datos[i] = fromModel.getValueAt(fila, i);
+                }
+                toModel.addRow(datos);
+                fromModel.removeRow(fila);
+            }
         }
-        
-        if (textFieldTitulo.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El campo Título no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
-            textFieldTitulo.requestFocus();
-            return false;
+
+        private boolean validateForm() {
+            if (textFieldISAN.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El campo ISAN no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                textFieldISAN.requestFocus();
+                return false;
+            }
+            
+            if (textFieldTitulo.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El campo Título no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                textFieldTitulo.requestFocus();
+                return false;
+            }
+            
+            if (textFieldDirector.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El campo Director no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                textFieldDirector.requestFocus();
+                return false;
+            }
+            
+            if (textFieldPelicula.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una película", "Error de validación", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+            return true;
         }
-        
-        if (textFieldDirector.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El campo Director no puede estar vacío", "Error de validación", JOptionPane.ERROR_MESSAGE);
-            textFieldDirector.requestFocus();
-            return false;
+
+        public void setPeliculaSeleccionada(Peliculas pelicula) {
+            if (pelicula != null) {
+                textFieldPelicula.setText(String.valueOf(pelicula.getNumRegistro()));
+                textFieldISAN.setText(pelicula.getISAN());
+                textFieldTitulo.setText(pelicula.getTitulo());
+                textFieldDirector.setText(pelicula.getDirector());
+                
+                // Establecer el estilo en el comboBox
+                comboBoxEstilo.setSelectedItem(pelicula.getEstilo());
+                
+                // Establecer el soporte
+                if ("Físico".equals(pelicula.getSoporte())) {
+                    rdbtnFisico.setSelected(true);
+                } else {
+                    rdbtnDigital.setSelected(true);
+                }
+                
+                // Establecer la duración
+                spinnerDuracion.setValue(pelicula.getDuracion());
+                
+                // Establecer el año de publicación
+                if (pelicula.getAnioPublicacion() != null) {
+                    yearChooser.setYear(pelicula.getAnioPublicacion().getYear());
+                }
+                
+                // Limpiar tablas
+                modelTodos.setRowCount(0);
+                modelAñadidos.setRowCount(0);
+                
+                // Obtener todos los protagonistas
+                ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
+                
+                // Primero, rellenar la tabla de protagonistas de la película
+                for (Protagonista prota : pelicula.getProtagonistas()) {
+                    modelAñadidos.addRow(new Object[]{
+                        prota.getIdProta(),
+                        prota.getNombre()
+                    });
+                }
+                
+                // Luego, rellenar la tabla de protagonistas disponibles
+                for (Protagonista prota : todosProtagonistas) {
+                    if (!pelicula.getProtagonistas().contains(prota)) {
+                        modelTodos.addRow(new Object[]{
+                            prota.getIdProta(),
+                            prota.getNombre()
+                        });
+                    }
+                }
+                
+                // Hacemos no editable el ISAN
+                textFieldISAN.setEditable(false);
+            }
         }
-        
-        if (textFieldPelicula.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar una película", "Error de validación", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        
-        return true;
     }
-    
-    public void setPeliculaSeleccionada(Peliculas pelicula) {
-        if (pelicula != null) {
-            textFieldPelicula.setText(String.valueOf(pelicula.getISAN()));
-        }
-    } 
-}
