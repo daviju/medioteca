@@ -344,7 +344,7 @@ public class MetodosGraficos {
 	
 	public static void rellenarFormularioRevista(Revistas revista, ModRevista dialog) {
 	    if (revista != null) {
-	        dialog.textFieldRevista.setText(String.valueOf(revista.getNumRegistro()));
+	        dialog.textFieldMedio.setText(String.valueOf(revista.getNumRegistro()));
 	        dialog.textFieldISBN.setText(revista.getISBN());
 	        dialog.textFieldTitulo.setText(revista.getTitulo());
 	        

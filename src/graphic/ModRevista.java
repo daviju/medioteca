@@ -17,7 +17,8 @@ public class ModRevista extends JDialog {
     public static JSpinner spinnerNumPaginas;
     public static JTextArea textAreaIndice;
     public static JYearChooser yearChooser;
-    private JTextField textFieldMedio;
+    public static JTextField textFieldISBN;
+    public static JTextField textFieldMedio;
 
     public static void main(String[] args) {
         try {
@@ -136,16 +137,21 @@ public class ModRevista extends JDialog {
         btnNewButton.setBounds(20, 22, 147, 23);
         contentPanel.add(btnNewButton);
         
+        textFieldISBN = new JTextField();
+        textFieldISBN.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        textFieldISBN.setBounds(196, 22, 135, 24);
+        contentPanel.add(textFieldISBN);
+        textFieldISBN.setColumns(10);
+        
+        JLabel lblMedio = new JLabel("Nº Registro");
+        lblMedio.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblMedio.setBounds(341, 23, 100, 21);
+        contentPanel.add(lblMedio);
+        
         textFieldMedio = new JTextField();
-        textFieldMedio.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        textFieldMedio.setBounds(196, 22, 135, 24);
+        textFieldMedio.setBounds(448, 22, 108, 23);
         contentPanel.add(textFieldMedio);
         textFieldMedio.setColumns(10);
-        
-        JLabel lblNewLabel = new JLabel("");
-        lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
-        lblNewLabel.setBounds(0, 0, 612, 470);
-        contentPanel.add(lblNewLabel);
     }
 
     private void setupButtons() {
