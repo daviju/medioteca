@@ -79,7 +79,7 @@ public class BuscaPelicula extends JDialog {
                 // Verifica si hay una fila seleccionada en la tabla  
                 if (table.getSelectedRow() != -1) {  
                     // Obtiene la película correspondiente a la fila seleccionada  
-                    peliculaSeleccionada = MetodosGraficos.devuelvePelicula(table);  
+                    peliculaSeleccionada = MetodosGraficos.devuelvePelicula(table, (ModPelicula)parent);
 
                     // Asigna la película seleccionada al padre
                     if (parent instanceof ModPelicula) {  

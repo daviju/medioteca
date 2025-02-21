@@ -45,6 +45,12 @@ public class ModPelicula extends JDialog {
     public static DefaultTableModel modelAñadidos;
     public static ButtonGroup soporteGroup;
     public static JTextField textFieldPelicula;
+    
+    public static JComboBox<String> comboBoxEstilo;
+    public static JSpinner spinnerDuracion;
+    public static JYearChooser yearChooser;
+    public static JRadioButton rdbtnFisico;
+    public static JRadioButton rdbtnDigital;
 
     public static void main(String[] args) {
         try {
@@ -318,10 +324,6 @@ public class ModPelicula extends JDialog {
         buttonPane.add(cancelButton);
         
         
-    }
-    
-    public JSpinner getSpinnerDuracion() {
-        return spinnerDuracion;
     }
 
     private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
