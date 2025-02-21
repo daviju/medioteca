@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -261,10 +262,6 @@ public class ModPelicula extends JDialog {
         lblNewLabel.setBounds(0, 0, 754, 504);
         contentPanel.add(lblNewLabel);
 
-        // Rellenar la tabla de disponibles
-        ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
-        fillTableDisponibles(todosProtagonistas);
-
         btnAgregar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 moveProta(tableDisponibles, tableAñadidos, modelTodos, modelAñadidos);
@@ -277,14 +274,16 @@ public class ModPelicula extends JDialog {
             }
         });
 
+     // En ModPelicula.java, modificar la sección de los botones:
+
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-        JButton okButton = new JButton("OK");
-        okButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        okButton.setForeground(Color.GREEN);
-        okButton.addActionListener(new ActionListener() {
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        btnModificar.setForeground(Color.BLUE);
+        btnModificar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (validateForm()) {
                     try {
@@ -299,9 +298,7 @@ public class ModPelicula extends JDialog {
                             tableAñadidos,
                             textFieldPelicula
                         );
-                        
                         dispose();
-                        
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(ModPelicula.this,
                             "Error al modificar la película: " + ex.getMessage(),
@@ -312,37 +309,76 @@ public class ModPelicula extends JDialog {
                 }
             }
         });
+        buttonPane.add(btnModificar);
 
-        buttonPane.add(okButton);
-        getRootPane().setDefaultButton(okButton);
+        JButton btnBorrar = new JButton("Borrar");
+        btnBorrar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        btnBorrar.setForeground(Color.RED);
+        btnBorrar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (validateForm()) {
+                    int confirm = JOptionPane.showConfirmDialog(
+                        ModPelicula.this,
+                        "¿Está seguro de que desea eliminar esta película?\nEsta acción no se puede deshacer.",
+                        "Confirmar eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                    );
+                    
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        String isan = textFieldISAN.getText();
+                        int numRegistro = Integer.parseInt(textFieldPelicula.getText());
+                        MetodosGraficos.eliminarPelicula(isan, numRegistro);
+                        dispose();
+                    }
+                }
+            }
+        });
+        buttonPane.add(btnBorrar);
 
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        cancelButton.setForeground(Color.RED);
-        cancelButton.addActionListener(e -> dispose());
+        JButton btnCancelar = new JButton("Cancelar");
+        btnCancelar.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        btnCancelar.setForeground(Color.GRAY);
+        btnCancelar.addActionListener(e -> dispose());
+        buttonPane.add(btnCancelar);
     }
         
-        private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
-            modelTodos.setRowCount(0);
-            for (Protagonista prota : protagonistas) {
-                modelTodos.addRow(new Object[]{
-                    prota.getIdProta(),
-                    prota.getNombre()
-                });
-            }
-        }
+	    private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
+	        modelTodos.setRowCount(0);
+	        
+	        // Obtener la lista de protagonistas ya añadidos
+	        List<Integer> protasAñadidosIds = new ArrayList<>();
+	        for (int i = 0; i < modelAñadidos.getRowCount(); i++) {
+	            protasAñadidosIds.add(Integer.parseInt(modelAñadidos.getValueAt(i, 0).toString()));
+	        }
+	        
+	        // Solo añadir a la tabla de disponibles los que no están en la tabla de añadidos
+	        for (Protagonista prota : protagonistas) {
+	            if (!protasAñadidosIds.contains(prota.getIdProta())) {
+	                modelTodos.addRow(new Object[]{
+	                    prota.getIdProta(),
+	                    prota.getNombre()
+	                });
+	            }
+	        }
+	    }
 
-        private void moveProta(JTable fromTable, JTable toTable, DefaultTableModel fromModel, DefaultTableModel toModel) {
-            int fila = fromTable.getSelectedRow();
-            if (fila != -1) {
-                Object[] datos = new Object[fromTable.getColumnCount()];
-                for (int i = 0; i < fromTable.getColumnCount(); i++) {
-                    datos[i] = fromModel.getValueAt(fila, i);
-                }
-                toModel.addRow(datos);
-                fromModel.removeRow(fila);
-            }
-        }
+	    private void moveProta(JTable fromTable, JTable toTable, DefaultTableModel fromModel, DefaultTableModel toModel) {
+	        int selectedRow = fromTable.getSelectedRow();
+	        if (selectedRow != -1) {
+	            // Obtener los datos de la fila seleccionada
+	            Object[] rowData = new Object[fromModel.getColumnCount()];
+	            for (int i = 0; i < fromModel.getColumnCount(); i++) {
+	                rowData[i] = fromModel.getValueAt(selectedRow, i);
+	            }
+	            
+	            // Añadir a la tabla destino
+	            toModel.addRow(rowData);
+	            
+	            // Eliminar de la tabla origen
+	            fromModel.removeRow(selectedRow);
+	        }
+	    }
 
         private boolean validateForm() {
             if (textFieldISAN.getText().trim().isEmpty()) {
@@ -396,24 +432,32 @@ public class ModPelicula extends JDialog {
                     yearChooser.setYear(pelicula.getAnioPublicacion().getYear());
                 }
                 
-                // Limpiar tablas
+                // Limpiar ambas tablas
                 modelTodos.setRowCount(0);
                 modelAñadidos.setRowCount(0);
                 
-                // Obtener todos los protagonistas
-                ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
-                
                 // Primero, rellenar la tabla de protagonistas de la película
-                for (Protagonista prota : pelicula.getProtagonistas()) {
+                List<Protagonista> protagonistasPelicula = pelicula.getProtagonistas();
+                for (Protagonista prota : protagonistasPelicula) {
                     modelAñadidos.addRow(new Object[]{
                         prota.getIdProta(),
                         prota.getNombre()
                     });
                 }
                 
-                // Luego, rellenar la tabla de protagonistas disponibles
+                // Obtener todos los protagonistas y filtrar los que ya están en la película
+                ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
                 for (Protagonista prota : todosProtagonistas) {
-                    if (!pelicula.getProtagonistas().contains(prota)) {
+                    boolean yaEstaEnPelicula = false;
+                    for (int i = 0; i < modelAñadidos.getRowCount(); i++) {
+                        int idProta = Integer.parseInt(modelAñadidos.getValueAt(i, 0).toString());
+                        if (prota.getIdProta() == idProta) {
+                            yaEstaEnPelicula = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!yaEstaEnPelicula) {
                         modelTodos.addRow(new Object[]{
                             prota.getIdProta(),
                             prota.getNombre()

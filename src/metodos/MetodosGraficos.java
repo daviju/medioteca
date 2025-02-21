@@ -690,9 +690,6 @@ public class MetodosGraficos {
 		// MODIFICAR
 		
 		// MODIFICAR PELICULA
-		/**
-		 * Modifica una película existente con los datos proporcionados por los componentes de la interfaz
-		 */
 		public static void modificarPelicula(
 		        JTextField textFieldISAN,
 		        JTextField textFieldTitulo,
@@ -786,6 +783,46 @@ public class MetodosGraficos {
 		        JOptionPane.showMessageDialog(null, 
 		            "Error al modificar la película: " + e.getMessage(), 
 		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    }
+		}
+		
+		
+		
+		// BORRAR
+		
+		// BORRAR PELICULA
+		public static void eliminarPelicula(String isan, int numRegistro) {
+		    try {
+		        // 1. Eliminamos la película
+		        int resultadoPelicula = RepoPelicula.delete(isan, numRegistro);
+		        
+		        if (resultadoPelicula > 0) {
+		            // 2. Eliminamos el medio
+		            int resultadoMedio = RepoMedio.deleteById(numRegistro);
+		            
+		            if (resultadoMedio > 0) {
+		                JOptionPane.showMessageDialog(null,
+		                    "Película eliminada correctamente",
+		                    "Éxito",
+		                    JOptionPane.INFORMATION_MESSAGE);
+		            } else {
+		                JOptionPane.showMessageDialog(null,
+		                    "Error al eliminar el medio",
+		                    "Error",
+		                    JOptionPane.ERROR_MESSAGE);
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(null,
+		                "Error al eliminar la película",
+		                "Error",
+		                JOptionPane.ERROR_MESSAGE);
+		        }
+		    } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null,
+		            "Error durante la eliminación: " + e.getMessage(),
+		            "Error",
 		            JOptionPane.ERROR_MESSAGE);
 		        e.printStackTrace();
 		    }
