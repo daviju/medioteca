@@ -9,14 +9,15 @@ import com.toedter.calendar.JYearChooser;
 public class ModRevista extends JDialog {
     private static final long serialVersionUID = 1L;
     private final JPanel contentPanel = new JPanel();
-    private JTextField textFieldTitulo;
-    private JList<String> listTematicas;
-    private DefaultListModel<String> listModel;
-    private JScrollPane scrollPaneTematicas;
-    private JLabel selectedItemLabel;
-    private JSpinner spinnerNumPaginas;
-    private JTextArea textAreaIndice;
-    private JYearChooser yearChooser;
+    public static JTextField textFieldTitulo;
+    public static JList<String> listTematicas;
+    public static DefaultListModel<String> listModel;
+    public static JScrollPane scrollPaneTematicas;
+    public static JLabel selectedItemLabel;
+    public static JSpinner spinnerNumPaginas;
+    public static JTextArea textAreaIndice;
+    public static JYearChooser yearChooser;
+    private JTextField textFieldMedio;
 
     public static void main(String[] args) {
         try {
@@ -135,9 +136,15 @@ public class ModRevista extends JDialog {
         btnNewButton.setBounds(20, 22, 147, 23);
         contentPanel.add(btnNewButton);
         
+        textFieldMedio = new JTextField();
+        textFieldMedio.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        textFieldMedio.setBounds(196, 22, 135, 24);
+        contentPanel.add(textFieldMedio);
+        textFieldMedio.setColumns(10);
+        
         JLabel lblNewLabel = new JLabel("");
         lblNewLabel.setIcon(new ImageIcon("C:\\Users\\Daviju\\Desktop\\2º DAW\\Recuperaciones\\Programación\\Copia\\medioteca\\images\\fondonormal.jpg"));
-        lblNewLabel.setBounds(-14, 0, 626, 470);
+        lblNewLabel.setBounds(0, 0, 612, 470);
         contentPanel.add(lblNewLabel);
     }
 

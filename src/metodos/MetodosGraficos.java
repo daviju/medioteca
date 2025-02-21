@@ -234,6 +234,26 @@ public class MetodosGraficos {
 	    }
 	}
 	
+	// Devuelve Revista seleccionada
+	public static Revistas devuelveRevista(JTable tabla) {
+	    int filaSeleccionada = tabla.getSelectedRow();
+	    
+	    if (filaSeleccionada == -1) {
+	        return null;
+	    }
+	    
+	    try {
+	        TableModel modelo = tabla.getModel();
+	        String isbn = modelo.getValueAt(filaSeleccionada, 0).toString();
+	        return RepoRevistas.findByISBN(isbn);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+	
+	// IMPRIMIR PELICULA
 	public static void rellenarFormularioPelicula(Peliculas pelicula, ModPelicula dialog) {
 	    if (pelicula != null) {
 	        dialog.textFieldPelicula.setText(String.valueOf(pelicula.getNumRegistro()));
@@ -295,6 +315,64 @@ public class MetodosGraficos {
 	    }
 	}
 
+	
+	// IMPRIMIR REVISTAS
+	public static void rellenarTablaRevistas(JTable tabla) {
+	    DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+	    modelo.setRowCount(0); // Limpiar tabla
+	    
+	    ArrayList<Revistas> revistas = (ArrayList<Revistas>) RepoRevistas.findAll();
+	    
+	    for (Revistas revista : revistas) {
+	        // Obtener los nombres de los artículos
+	        String nombresArticulos = revista.getIndice().stream()
+	            .map(Articulo::getNombre)
+	            .collect(Collectors.joining(", "));
+	        
+	        Object[] fila = {
+	            revista.getISBN(),
+	            revista.getTitulo(),
+	            revista.getTematica(),
+	            nombresArticulos,
+	            revista.getAnioPublicacion(),
+	            revista.getNumPaginas(),
+	            revista.getNumRegistro()
+	        };
+	        modelo.addRow(fila);
+	    }
+	}
+	
+	public static void rellenarFormularioRevista(Revistas revista, ModRevista dialog) {
+	    if (revista != null) {
+	        dialog.textFieldRevista.setText(String.valueOf(revista.getNumRegistro()));
+	        dialog.textFieldISBN.setText(revista.getISBN());
+	        dialog.textFieldTitulo.setText(revista.getTitulo());
+	        
+	        // Establecer la temática
+	        dialog.selectedItemLabel.setText("Temática seleccionada: " + revista.getTematica());
+	        
+	        // Establecer el número de páginas
+	        dialog.spinnerNumPaginas.setValue(revista.getNumPaginas());
+	        
+	        // Establecer el año de publicación
+	        if (revista.getAnioPublicacion() != null) {
+	            dialog.yearChooser.setYear(revista.getAnioPublicacion().getYear());
+	        }
+	        
+	        // Rellenar el área de texto con los artículos
+	        StringBuilder articulos = new StringBuilder();
+	        for (Articulo articulo : revista.getIndice()) {
+	            if (articulos.length() > 0) {
+	                articulos.append("\n");
+	            }
+	            articulos.append(articulo.getNombre());
+	        }
+	        dialog.textAreaIndice.setText(articulos.toString());
+	        
+	        // Hacemos no editable el ISBN
+	        dialog.textFieldISBN.setEditable(false);
+	    }
+	}
 	
 	
 	// GUARDAR DATOS
