@@ -409,63 +409,51 @@ public class ModPelicula extends JDialog {
 
         public void setPeliculaSeleccionada(Peliculas pelicula) {
             if (pelicula != null) {
+                // Configurar los campos básicos
                 textFieldPelicula.setText(String.valueOf(pelicula.getNumRegistro()));
                 textFieldISAN.setText(pelicula.getISAN());
                 textFieldTitulo.setText(pelicula.getTitulo());
                 textFieldDirector.setText(pelicula.getDirector());
-                
-                // Establecer el estilo en el comboBox
                 comboBoxEstilo.setSelectedItem(pelicula.getEstilo());
                 
-                // Establecer el soporte
+                // Configurar soporte
                 if ("Físico".equals(pelicula.getSoporte())) {
                     rdbtnFisico.setSelected(true);
                 } else {
                     rdbtnDigital.setSelected(true);
                 }
                 
-                // Establecer la duración
                 spinnerDuracion.setValue(pelicula.getDuracion());
                 
-                // Establecer el año de publicación
                 if (pelicula.getAnioPublicacion() != null) {
                     yearChooser.setYear(pelicula.getAnioPublicacion().getYear());
                 }
                 
-                // Limpiar ambas tablas
+                // Limpiar tablas
                 modelTodos.setRowCount(0);
                 modelAñadidos.setRowCount(0);
                 
-                // Primero, rellenar la tabla de protagonistas de la película
-                List<Protagonista> protagonistasPelicula = pelicula.getProtagonistas();
-                for (Protagonista prota : protagonistasPelicula) {
-                    modelAñadidos.addRow(new Object[]{
-                        prota.getIdProta(),
-                        prota.getNombre()
-                    });
+                // 1. Primero añadir los protagonistas de la película a la tabla de añadidos
+                for (Protagonista p : pelicula.getProtagonistas()) {
+                    modelAñadidos.addRow(new Object[]{p.getIdProta(), p.getNombre()});
                 }
                 
-                // Obtener todos los protagonistas y filtrar los que ya están en la película
+                // 2. Obtener todos los protagonistas
                 ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
-                for (Protagonista prota : todosProtagonistas) {
-                    boolean yaEstaEnPelicula = false;
+                
+                // 3. Para cada protagonista, verificar si NO está en la película
+                protas: for (Protagonista prota : todosProtagonistas) {
+                    // Revisar si este protagonista ya está en la tabla de añadidos
                     for (int i = 0; i < modelAñadidos.getRowCount(); i++) {
-                        int idProta = Integer.parseInt(modelAñadidos.getValueAt(i, 0).toString());
-                        if (prota.getIdProta() == idProta) {
-                            yaEstaEnPelicula = true;
-                            break;
+                        int idEnTabla = (int) modelAñadidos.getValueAt(i, 0);
+                        if (idEnTabla == prota.getIdProta()) {
+                            continue protas; // Si lo encontramos, pasamos al siguiente protagonista
                         }
                     }
-                    
-                    if (!yaEstaEnPelicula) {
-                        modelTodos.addRow(new Object[]{
-                            prota.getIdProta(),
-                            prota.getNombre()
-                        });
-                    }
+                    // Si llegamos aquí es porque el protagonista no está en la tabla de añadidos
+                    modelTodos.addRow(new Object[]{prota.getIdProta(), prota.getNombre()});
                 }
                 
-                // Hacemos no editable el ISAN
                 textFieldISAN.setEditable(false);
             }
         }
