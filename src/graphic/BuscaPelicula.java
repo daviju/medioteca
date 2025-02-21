@@ -48,7 +48,7 @@ public class BuscaPelicula extends JDialog {
         table.setModel(new DefaultTableModel(
             new Object[][] {},
             new String[] {
-                "ISAN", "Título", "Director", "Estilo", "Duración", "Año", "Soporte"
+                "ISAN", "Título", "Director", "Protagonistas", "Estilo", "Soporte", "Duración", "Año de Publicación"
             }
         ) {
             @Override
@@ -104,7 +104,7 @@ public class BuscaPelicula extends JDialog {
     }
     
     // Getter para la película seleccionada
-    public Pelicula getPeliculaSeleccionada() {
+    public Peliculas getPeliculaSeleccionada() {
         return peliculaSeleccionada;
     }
 }
