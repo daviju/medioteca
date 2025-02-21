@@ -216,6 +216,91 @@ public class MetodosGraficos {
 	}
 	
 	
+	// Devuelve Pelicula seleccionada
+	public static void devuelvePelicula(JTable tabla, ModPelicula dialog) {
+	    int filaSeleccionada = tabla.getSelectedRow();
+
+	    if (filaSeleccionada == -1) {
+	        JOptionPane.showMessageDialog(null, 
+	            "Por favor, seleccione una película", 
+	            "Error", 
+	            JOptionPane.ERROR_MESSAGE);
+	        return;
+	    }
+
+	    try {
+	        TableModel modelo = tabla.getModel();
+	        String isan = modelo.getValueAt(filaSeleccionada, 0).toString();
+
+	        // Buscamos la película completa en la base de datos
+	        Peliculas pelicula = RepoPelicula.findByISAN(isan);
+
+	        if (pelicula == null) {
+	            JOptionPane.showMessageDialog(dialog,
+	                "No se encontró la película con ISAN: " + isan,
+	                "Error",
+	                JOptionPane.ERROR_MESSAGE);
+	            return;
+	        }
+
+	        // Rellenamos los campos del diálogo
+	        dialog.textFieldPelicula.setText(isan);
+	        dialog.textFieldISAN.setText(pelicula.getISAN());
+	        dialog.textFieldTitulo.setText(pelicula.getTitulo());
+	        dialog.textFieldDirector.setText(pelicula.getDirector());
+
+	        // Seleccionar estilo
+	        dialog.comboBoxEstilo.setSelectedItem(pelicula.getEstilo());
+
+	        // Establecer el soporte (Físico/Digital)
+	        Enumeration<AbstractButton> buttons = dialog.soporteGroup.getElements();
+	        while (buttons.hasMoreElements()) {
+	            JRadioButton button = (JRadioButton) buttons.nextElement();
+	            if (button.getText().equals(pelicula.getSoporte())) {
+	                button.setSelected(true);
+	                break;
+	            }
+	        }
+
+	        // Establecer duración y año de publicación
+	        dialog.spinnerDuracion.setValue(pelicula.getDuracion());
+	        if (pelicula.getAnioPublicacion() != null) {
+	            dialog.yearChooser.setYear(pelicula.getAnioPublicacion().getYear());
+	        }
+
+	        // Limpiar tablas
+	        dialog.modelTodos.setRowCount(0);
+	        dialog.modelAñadidos.setRowCount(0);
+
+	        // Obtener todos los protagonistas
+	        ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
+	        List<Protagonista> protasEnPelicula = pelicula.getProtagonistas();
+
+	        // Rellenar tabla de protagonistas de la película
+	        for (Protagonista prota : protasEnPelicula) {
+	            dialog.modelAñadidos.addRow(new Object[]{ prota.getIdProta(), prota.getNombre() });
+	        }
+
+	        // Rellenar tabla de disponibles (excluyendo los que ya están en la película)
+	        for (Protagonista prota : todosProtagonistas) {
+	            if (!protasEnPelicula.contains(prota)) {
+	                dialog.modelTodos.addRow(new Object[]{ prota.getIdProta(), prota.getNombre() });
+	            }
+	        }
+
+	        // Hacer que el ISAN no sea editable
+	        dialog.textFieldISAN.setEditable(false);
+
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(dialog,
+	            "Error al cargar la película: " + e.getMessage(),
+	            "Error",
+	            JOptionPane.ERROR_MESSAGE);
+	        e.printStackTrace();
+	    }
+	}
+
+	
 	
 	// GUARDAR DATOS
 	
@@ -612,5 +697,108 @@ public class MetodosGraficos {
 		}
 		
 	
+		// MODIFICAR
+		
+		// MODIFICAR PELICULA
+		/**
+		 * Modifica una película existente con los datos proporcionados por los componentes de la interfaz
+		 */
+		public static void modificarPelicula(
+		        JTextField textFieldISAN,
+		        JTextField textFieldTitulo,
+		        JTextField textFieldDirector,
+		        JComboBox<String> comboBoxEstilo,
+		        ButtonGroup soporteGroup,
+		        JSpinner spinnerDuracion,
+		        JYearChooser yearChooser,
+		        JTable tableAñadidos,
+		        JTextField textFieldMedio) {
+		    
+		    try {
+		        // Obtener la película existente
+		        String isan = textFieldISAN.getText().trim();
+		        Peliculas peliculaExistente = RepoPelicula.findByISAN(isan);
+		        
+		        if (peliculaExistente == null) {
+		            JOptionPane.showMessageDialog(null, 
+		                "No se encontró la película con ISAN: " + isan, 
+		                "Error", 
+		                JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+
+		        // Recoger los datos de los componentes
+		        String titulo = textFieldTitulo.getText().trim();
+		        String director = textFieldDirector.getText().trim();
+		        String estilo = comboBoxEstilo.getSelectedItem().toString();
+		        int duracion = (int) spinnerDuracion.getValue();
+		        int anio = yearChooser.getYear();
+		        
+		        // Obtener el soporte seleccionado
+		        String soporte = "";
+		        for (Enumeration<AbstractButton> buttons = soporteGroup.getElements(); buttons.hasMoreElements();) {
+		            JRadioButton button = (JRadioButton) buttons.nextElement();
+		            if (button.isSelected()) {
+		                soporte = button.getText();
+		                break;
+		            }
+		        }
+		        
+		        // Crear lista de protagonistas desde la tabla
+		        List<Protagonista> protagonistas = new ArrayList<>();
+		        DefaultTableModel model = (DefaultTableModel) tableAñadidos.getModel();
+		        for (int i = 0; i < model.getRowCount(); i++) {
+		            int idProta = Integer.parseInt(model.getValueAt(i, 0).toString());
+		            Protagonista protagonista = RepoProtagonista.findById(idProta);
+		            if (protagonista != null) {
+		                protagonistas.add(protagonista);
+		            }
+		        }
+		        
+		        // Crear el objeto Película actualizado
+		        Peliculas peliculaActualizada = new Peliculas(
+		            peliculaExistente.getNumRegistro(),
+		            peliculaExistente.getFechaAdquisicion(),
+		            peliculaExistente.getPrecioCompra(),
+		            peliculaExistente.getNumEjemplares(),
+		            isan,
+		            titulo,
+		            director,
+		            protagonistas,
+		            estilo,
+		            soporte,
+		            duracion,
+		            LocalDate.of(anio, 1, 1)
+		        );
+		        
+		        // Llamar al método modify del repositorio
+		        int resultado = RepoPelicula.modify(peliculaActualizada);
+		        
+		        if (resultado > 0) {
+		            JOptionPane.showMessageDialog(null, 
+		                "Película modificada correctamente", 
+		                "Éxito", 
+		                JOptionPane.INFORMATION_MESSAGE);
+		        } else {
+		            JOptionPane.showMessageDialog(null, 
+		                "Error al modificar la película", 
+		                "Error", 
+		                JOptionPane.ERROR_MESSAGE);
+		        }
+		        
+		    } catch (NumberFormatException e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error en el formato de los números: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    } catch (Exception e) {
+		        JOptionPane.showMessageDialog(null, 
+		            "Error al modificar la película: " + e.getMessage(), 
+		            "Error", 
+		            JOptionPane.ERROR_MESSAGE);
+		        e.printStackTrace();
+		    }
+		}
 	
 }

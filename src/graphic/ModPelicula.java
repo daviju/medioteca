@@ -23,7 +23,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.JOptionPane;
 import com.toedter.calendar.JYearChooser;
 import conexion.RepoProtagonista;
-import entidades.Pelicula;
 import entidades.Peliculas;
 import entidades.Protagonista;
 import metodos.MetodosGraficos;
@@ -317,6 +316,12 @@ public class ModPelicula extends JDialog {
         cancelButton.setForeground(Color.RED);
         cancelButton.addActionListener(e -> dispose());
         buttonPane.add(cancelButton);
+        
+        
+    }
+    
+    public JSpinner getSpinnerDuracion() {
+        return spinnerDuracion;
     }
 
     private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
@@ -372,5 +377,5 @@ public class ModPelicula extends JDialog {
         if (pelicula != null) {
             textFieldPelicula.setText(String.valueOf(pelicula.getISAN()));
         }
-    }
+    } 
 }

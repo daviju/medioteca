@@ -63,7 +63,7 @@ public class BuscaPelicula extends JDialog {
         scrollPane.setViewportView(table);
         
         // Llamar a imprimirPeliculas
-        MetodosGraficos.imprimirPeliculas(table);
+        MetodosGraficos.rellenarTablaPeliculas(table);
         
         // Panel de botones
         JPanel buttonPane = new JPanel();
