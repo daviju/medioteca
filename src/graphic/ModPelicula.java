@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -208,6 +209,7 @@ public class ModPelicula extends JDialog {
             }
         };
         tableDisponibles.setModel(modelTodos);
+        
         tableDisponibles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableDisponibles.setFont(new Font("Tahoma", Font.PLAIN, 17));
         scrollPaneDisponibles.setViewportView(tableDisponibles);
@@ -342,26 +344,6 @@ public class ModPelicula extends JDialog {
         btnCancelar.addActionListener(e -> dispose());
         buttonPane.add(btnCancelar);
     }
-        
-	    private void fillTableDisponibles(ArrayList<Protagonista> protagonistas) {
-	        modelTodos.setRowCount(0);
-	        
-	        // Obtener la lista de protagonistas ya añadidos
-	        List<Integer> protasAñadidosIds = new ArrayList<>();
-	        for (int i = 0; i < modelAñadidos.getRowCount(); i++) {
-	            protasAñadidosIds.add(Integer.parseInt(modelAñadidos.getValueAt(i, 0).toString()));
-	        }
-	        
-	        // Solo añadir a la tabla de disponibles los que no están en la tabla de añadidos
-	        for (Protagonista prota : protagonistas) {
-	            if (!protasAñadidosIds.contains(prota.getIdProta())) {
-	                modelTodos.addRow(new Object[]{
-	                    prota.getIdProta(),
-	                    prota.getNombre()
-	                });
-	            }
-	        }
-	    }
 
 	    private void moveProta(JTable fromTable, JTable toTable, DefaultTableModel fromModel, DefaultTableModel toModel) {
 	        int selectedRow = fromTable.getSelectedRow();
@@ -409,14 +391,13 @@ public class ModPelicula extends JDialog {
 
         public void setPeliculaSeleccionada(Peliculas pelicula) {
             if (pelicula != null) {
-                // Configurar los campos básicos
+                // Campos básicos
                 textFieldPelicula.setText(String.valueOf(pelicula.getNumRegistro()));
                 textFieldISAN.setText(pelicula.getISAN());
                 textFieldTitulo.setText(pelicula.getTitulo());
                 textFieldDirector.setText(pelicula.getDirector());
                 comboBoxEstilo.setSelectedItem(pelicula.getEstilo());
                 
-                // Configurar soporte
                 if ("Físico".equals(pelicula.getSoporte())) {
                     rdbtnFisico.setSelected(true);
                 } else {
@@ -433,28 +414,35 @@ public class ModPelicula extends JDialog {
                 modelTodos.setRowCount(0);
                 modelAñadidos.setRowCount(0);
                 
-                // 1. Primero añadir los protagonistas de la película a la tabla de añadidos
+                // Añadir protas de la película a la tabla de añadidos
+                List<Integer> idsEnPelicula = new ArrayList<>();
                 for (Protagonista p : pelicula.getProtagonistas()) {
                     modelAñadidos.addRow(new Object[]{p.getIdProta(), p.getNombre()});
+                    idsEnPelicula.add(p.getIdProta());
                 }
                 
-                // 2. Obtener todos los protagonistas
-                ArrayList<Protagonista> todosProtagonistas = new ArrayList<>(RepoProtagonista.findAll());
-                
-                // 3. Para cada protagonista, verificar si NO está en la película
-                protas: for (Protagonista prota : todosProtagonistas) {
-                    // Revisar si este protagonista ya está en la tabla de añadidos
-                    for (int i = 0; i < modelAñadidos.getRowCount(); i++) {
-                        int idEnTabla = (int) modelAñadidos.getValueAt(i, 0);
-                        if (idEnTabla == prota.getIdProta()) {
-                            continue protas; // Si lo encontramos, pasamos al siguiente protagonista
-                        }
+                // Añadir el resto de protas a la tabla de disponibles
+                ArrayList<Protagonista> todosProtas = (ArrayList<Protagonista>) RepoProtagonista.findAll();
+                for (Protagonista p : todosProtas) {
+                    if (!idsEnPelicula.contains(p.getIdProta())) {
+                        modelTodos.addRow(new Object[]{p.getIdProta(), p.getNombre()});
                     }
-                    // Si llegamos aquí es porque el protagonista no está en la tabla de añadidos
-                    modelTodos.addRow(new Object[]{prota.getIdProta(), prota.getNombre()});
                 }
                 
                 textFieldISAN.setEditable(false);
+                
+                // Debug - imprimir contenido de las tablas
+                System.out.println("Protagonistas en la película:");
+                for (int i = 0; i < modelAñadidos.getRowCount(); i++) {
+                    System.out.println("ID: " + modelAñadidos.getValueAt(i, 0) + 
+                                     ", Nombre: " + modelAñadidos.getValueAt(i, 1));
+                }
+                
+                System.out.println("\nProtagonistas disponibles:");
+                for (int i = 0; i < modelTodos.getRowCount(); i++) {
+                    System.out.println("ID: " + modelTodos.getValueAt(i, 0) + 
+                                     ", Nombre: " + modelTodos.getValueAt(i, 1));
+                }
             }
         }
     }

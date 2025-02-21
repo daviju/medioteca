@@ -259,13 +259,18 @@ public class MetodosGraficos {
 	            dialog.yearChooser.setYear(pelicula.getAnioPublicacion().getYear());
 	        }
 	        
-	        // Limpiar tablas
+	     // Limpiar tablas
 	        dialog.modelTodos.setRowCount(0);
 	        dialog.modelAñadidos.setRowCount(0);
 	        
 	        // Obtener todos los protagonistas
 	        ArrayList<Protagonista> todosProtagonistas = (ArrayList<Protagonista>) RepoProtagonista.findAll();
 	        List<Protagonista> protasEnPelicula = pelicula.getProtagonistas();
+	        
+	        // Crear una lista de IDs de protagonistas en la película
+	        List<Integer> idsProtasEnPelicula = protasEnPelicula.stream()
+	            .map(Protagonista::getIdProta)
+	            .collect(Collectors.toList());
 	        
 	        // Primero, rellenar la tabla de protagonistas de la película
 	        for (Protagonista prota : protasEnPelicula) {
@@ -275,9 +280,9 @@ public class MetodosGraficos {
 	            });
 	        }
 	        
-	        // Luego, rellenar la tabla de protagonistas disponibles
+	        // Luego, rellenar la tabla de protagonistas disponibles (comparando por ID)
 	        for (Protagonista prota : todosProtagonistas) {
-	            if (!protasEnPelicula.contains(prota)) {
+	            if (!idsProtasEnPelicula.contains(prota.getIdProta())) {
 	                dialog.modelTodos.addRow(new Object[]{
 	                    prota.getIdProta(),
 	                    prota.getNombre()

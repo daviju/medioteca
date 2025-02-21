@@ -84,6 +84,7 @@ public class BuscaPelicula extends JDialog {
                     // Asigna la película seleccionada al padre y rellena el formulario
                     if (parent instanceof ModPelicula && peliculaSeleccionada != null) {  
                         ModPelicula modPelicula = (ModPelicula) parent;
+                        
                         modPelicula.setPeliculaSeleccionada(peliculaSeleccionada);
                         MetodosGraficos.rellenarFormularioPelicula(peliculaSeleccionada, modPelicula);
                     }  
